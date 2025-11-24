@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Interactive API documentation for Rails'
   spec.description   = 'Convert OpenAPI specs into beautiful, interactive documentation with live API testing'
-  spec.homepage      = 'https://github.com/yashdave31/elder_docs'
+  spec.homepage      = 'https://github.com/yashdave31/elderdocs'
   spec.license       = 'MIT'
 
   spec.files         = Dir[
