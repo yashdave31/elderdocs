@@ -13,7 +13,20 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/yashdave31/elder_docs'
   spec.license       = 'MIT'
 
-  spec.files         = Dir['lib/**/*', 'exe/**/*', 'README.md', 'LICENSE.txt', 'elderdocs.yml.example']
+  spec.files         = Dir[
+    'lib/**/*',
+    'exe/**/*',
+    'frontend/src/**/*',
+    'frontend/public/**/*',
+    'frontend/index.html',
+    'frontend/package.json',
+    'frontend/vite.config.js',
+    'frontend/tailwind.config.js',
+    'frontend/postcss.config.js',
+    'README.md',
+    'LICENSE.txt',
+    'elderdocs.yml.example'
+  ].select { |f| File.exist?(f) && !f.include?('node_modules') && !f.include?('dist') }
   spec.bindir        = 'exe'
   spec.executables   = ['elderdocs']
   spec.require_paths = ['lib']

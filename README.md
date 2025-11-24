@@ -145,6 +145,49 @@ bundle exec elderdocs deploy \
 - Rails >= 6.0
 - Node.js >= 16.0 (for building assets)
 
+## Development
+
+### Quick Development Build
+
+For rapid iteration during development:
+
+```bash
+./dev_build.sh
+# or
+rake elderdocs:dev
+```
+
+This rebuilds and reinstalls the gem locally without publishing.
+
+### Full Build and Deploy
+
+To build, test, and optionally publish a new version:
+
+```bash
+./build_and_deploy.sh
+# or
+rake elderdocs:deploy
+```
+
+Options:
+- `--skip-publish` - Build and test but don't publish to RubyGems
+- `--skip-tests` - Skip running tests
+
+### Manual Build
+
+```bash
+# Build gem
+rake elderdocs:build
+# or
+gem build elder_docs.gemspec
+
+# Install locally
+gem install elder_docs-*.gem --local
+
+# Publish (when ready)
+gem push elder_docs-*.gem
+```
+
 ## License
 
 MIT

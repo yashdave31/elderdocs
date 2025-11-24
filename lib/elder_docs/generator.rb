@@ -185,11 +185,27 @@ module ElderDocs
     def build_frontend!
       say '🔨 Building frontend...', :cyan
       
-      frontend_dir = File.join(File.dirname(__FILE__), '..', '..', 'frontend')
+      # Try multiple locations for frontend directory
+      # 1. Relative to lib (development repo)
+      # 2. At gem root (installed gem)
+      # 3. Using Engine.root if available (Rails context)
+      possible_paths = [
+        File.join(File.dirname(__FILE__), '..', '..', 'frontend'), # Development: lib/elder_docs/../../frontend
+        File.join(File.dirname(__FILE__), '..', '..', '..', 'frontend'), # Installed gem: lib/elder_docs/../../../frontend
+      ]
       
-      unless Dir.exist?(frontend_dir)
-        raise ValidationError, "Frontend directory not found at #{frontend_dir}"
+      # If Engine is available, try relative to gem root
+      if defined?(ElderDocs::Engine) && ElderDocs::Engine.root
+        possible_paths << ElderDocs::Engine.root.join('frontend').to_s
       end
+      
+      frontend_dir = possible_paths.find { |path| Dir.exist?(path) }
+      
+      unless frontend_dir && Dir.exist?(frontend_dir)
+        raise ValidationError, "Frontend directory not found. Tried: #{possible_paths.join(', ')}"
+      end
+      
+      frontend_dir = File.expand_path(frontend_dir)
       
       # Write compiled data to frontend public directory
       public_dir = File.join(frontend_dir, 'public')
