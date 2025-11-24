@@ -11,6 +11,8 @@ const ApiExplorer = ({ data, selectedItem }) => {
   const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState(null)
   const [isOpen, setIsOpen] = useState(true)
+  const [copied, setCopied] = useState(false)
+  const [showCurlPreview, setShowCurlPreview] = useState(false)
   
   const authTypes = data?.auth_types || ['bearer', 'api_key', 'basic', 'oauth2']
   const currentAuthType = authConfig?.type || 'bearer'
@@ -79,6 +81,85 @@ const ApiExplorer = ({ data, selectedItem }) => {
     }
     
     return url
+  }
+
+  const generateCurl = () => {
+    const url = buildUrl()
+    const method = selectedMethod.toUpperCase()
+    const curlParts = [`curl -X ${method}`]
+    
+    // Add URL
+    curlParts.push(`"${url}"`)
+    
+    // Add headers
+    const requestHeaders = {
+      'Content-Type': 'application/json',
+      ...headers
+    }
+    
+    // Apply authentication based on type
+    if (authConfig?.value) {
+      switch (authConfig.type) {
+        case 'bearer':
+          requestHeaders['Authorization'] = `Bearer ${authConfig.value}`
+          break
+        case 'api_key':
+          requestHeaders['X-API-Key'] = authConfig.value
+          break
+        case 'basic':
+          requestHeaders['Authorization'] = `Basic ${btoa(authConfig.value)}`
+          break
+        case 'oauth2':
+          requestHeaders['Authorization'] = `Bearer ${authConfig.value}`
+          break
+      }
+    }
+    
+    // Add all headers to curl command
+    Object.entries(requestHeaders).forEach(([key, value]) => {
+      curlParts.push(`-H "${key}: ${value}"`)
+    })
+    
+    // Add request body if present
+    if (['POST', 'PUT', 'PATCH'].includes(method) && body) {
+      try {
+        // Validate and format JSON
+        const jsonBody = JSON.parse(body)
+        const formattedBody = JSON.stringify(jsonBody)
+        curlParts.push(`-d '${formattedBody}'`)
+      } catch {
+        // If not valid JSON, add as-is
+        curlParts.push(`-d '${body}'`)
+      }
+    }
+    
+    return curlParts.join(' \\\n  ')
+  }
+
+  const copyCurl = async () => {
+    try {
+      const curlCommand = generateCurl()
+      await navigator.clipboard.writeText(curlCommand)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = generateCurl()
+      textArea.style.position = 'fixed'
+      textArea.style.opacity = '0'
+      document.body.appendChild(textArea)
+      textArea.select()
+      try {
+        document.execCommand('copy')
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      } catch (fallbackErr) {
+        console.error('Fallback copy failed:', fallbackErr)
+      }
+      document.body.removeChild(textArea)
+    }
   }
 
   const executeRequest = async () => {
@@ -282,14 +363,46 @@ const ApiExplorer = ({ data, selectedItem }) => {
           </div>
         )}
 
-        <button
-          onClick={executeRequest}
-          disabled={loading}
-          className="btn-primary w-full reveal"
-          style={{ animationDelay: '300ms' }}
-        >
-          {loading ? 'Sending...' : 'Send Request'}
-        </button>
+        <div className="reveal" style={{ animationDelay: '300ms' }}>
+          <button
+            onClick={() => setShowCurlPreview(!showCurlPreview)}
+            className="btn-secondary w-full mb-3 flex items-center justify-between"
+          >
+            <span className="flex items-center gap-2">
+              <span>💻</span>
+              <span>{showCurlPreview ? 'Hide' : 'Show'} cURL Command</span>
+            </span>
+            <span>{showCurlPreview ? '▲' : '▼'}</span>
+          </button>
+          
+          {showCurlPreview && (
+            <div className="mb-3 surface border-2 border-black bg-white p-4">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[0.65rem] uppercase tracking-[0.3em] text-black/60 font-bold">cURL Command</p>
+                <button
+                  onClick={copyCurl}
+                  className="text-xs btn-secondary px-2 py-1"
+                  title="Copy cURL command"
+                >
+                  {copied ? '✓ Copied!' : '📋 Copy'}
+                </button>
+              </div>
+              <pre className="text-xs font-mono text-black overflow-x-auto whitespace-pre-wrap break-words">
+                {generateCurl()}
+              </pre>
+            </div>
+          )}
+        </div>
+
+        <div className="reveal space-y-3" style={{ animationDelay: '320ms' }}>
+          <button
+            onClick={executeRequest}
+            disabled={loading}
+            className="btn-primary w-full"
+          >
+            {loading ? 'Sending...' : 'Send Request'}
+          </button>
+        </div>
 
         {response && (
           <div className="reveal" style={{ animationDelay: '320ms' }}>
