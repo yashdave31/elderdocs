@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-module BetterDocs
+module ElderDocs
   class Engine
     class UiConfigController < ActionController::Base
       include ActionController::MimeResponds
@@ -19,10 +19,10 @@ module BetterDocs
       end
       
       def login
-        admin_password = BetterDocs.config.admin_password || ENV['BETTERDOCS_ADMIN_PASSWORD'] || 'admin'
+        admin_password = ElderDocs.config.admin_password || ENV['ELDERDOCS_ADMIN_PASSWORD'] || 'admin'
         
         if params[:password] == admin_password
-          session[:betterdocs_admin] = true
+          session[:elderdocs_admin] = true
           render json: { success: true, message: 'Authentication successful' }
         else
           render json: { success: false, error: 'Invalid password' }, status: :unauthorized
@@ -32,7 +32,7 @@ module BetterDocs
       def show
         # If requesting HTML, serve the UI configurator page
         if request.format.html? || request.headers['Accept']&.include?('text/html')
-          ui_config_path = Engine.root.join('lib', 'better_docs', 'assets', 'ui_config.html')
+          ui_config_path = Engine.root.join('lib', 'elder_docs', 'assets', 'ui_config.html')
           if ui_config_path.exist?
             send_file ui_config_path, disposition: 'inline', type: 'text/html'
           else
@@ -73,7 +73,7 @@ module BetterDocs
         save_config(config_path, config)
         
         # Reload config in memory
-        BetterDocs.config.load_config_file
+        ElderDocs.config.load_config_file
         
         render json: {
           success: true,
@@ -83,14 +83,14 @@ module BetterDocs
       end
       
       def logout
-        session[:betterdocs_admin] = nil
+        session[:elderdocs_admin] = nil
         render json: { success: true, message: 'Logged out successfully' }
       end
       
       private
       
       def authenticate_admin
-        unless session[:betterdocs_admin]
+        unless session[:elderdocs_admin]
           render json: { requires_auth: true, error: 'Authentication required' }, status: :unauthorized
         end
       end
@@ -106,16 +106,16 @@ module BetterDocs
         config_paths = []
         
         if defined?(Rails) && Rails.root
-          config_paths << Rails.root.join('betterdocs.yml').to_s
+          config_paths << Rails.root.join('elderdocs.yml').to_s
         end
         
-        config_paths << File.join(Dir.pwd, 'betterdocs.yml')
+        config_paths << File.join(Dir.pwd, 'elderdocs.yml')
         
         config_path = config_paths.find { |path| File.exist?(path) }
         
         # Create default config file if it doesn't exist
         unless config_path
-          config_path = config_paths.first || File.join(Dir.pwd, 'betterdocs.yml')
+          config_path = config_paths.first || File.join(Dir.pwd, 'elderdocs.yml')
           File.write(config_path, {}.to_yaml)
         end
         

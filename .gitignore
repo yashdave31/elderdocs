@@ -6,7 +6,7 @@ vendor/bundle/
 # Build outputs
 frontend/dist/
 frontend/node_modules/
-lib/better_docs/assets/viewer/
+lib/elder_docs/assets/viewer/
 
 # Test app
 test_app/vendor/
@@ -30,7 +30,7 @@ debug-screenshot.png
 *.log
 
 # Config (user-specific)
-betterdocs.yml
+elderdocs.yml
 
 # Build artifacts
 *.gem

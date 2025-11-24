@@ -1,13 +1,13 @@
-# BetterDocs Installation Guide
+# ElderDocs Installation Guide
 
 ## For Rails Application Users
 
 ### Step 1: Add the Gem
 
-Add BetterDocs to your Rails application's `Gemfile`:
+Add ElderDocs to your Rails application's `Gemfile`:
 
 ```ruby
-gem 'better_docs', path: '/path/to/betterdocs'  # For local development
+gem 'elder_docs', path: '/path/to/elderdocs'  # For local development
 ```
 
 Then run:
@@ -30,7 +30,7 @@ See the `examples/` directory for sample files.
 Run the deployment command:
 
 ```bash
-bundle exec betterdocs deploy
+bundle exec elderdocs deploy
 ```
 
 This will:
@@ -41,12 +41,12 @@ This will:
 
 ### Step 4: Mount the Engine (Optional)
 
-By default, BetterDocs automatically mounts at `/docs`. If you want to customize the mount path, add this to your `config/routes.rb`:
+By default, ElderDocs automatically mounts at `/docs`. If you want to customize the mount path, add this to your `config/routes.rb`:
 
 ```ruby
 # config/routes.rb
 Rails.application.routes.draw do
-  mount BetterDocs::Engine, at: '/api-docs'  # Custom path
+  mount ElderDocs::Engine, at: '/api-docs'  # Custom path
   # ... your other routes
 end
 ```
@@ -67,7 +67,7 @@ If you get an error about Node.js not being found:
 
 1. Install Node.js (version 16 or higher)
 2. Verify installation: `node --version`
-3. Run `betterdocs deploy` again
+3. Run `elderdocs deploy` again
 
 ### Build Failures
 
@@ -84,13 +84,13 @@ If you get errors about missing JSON files:
 
 1. Ensure `definitions.json` exists in your Rails root
 2. Create `articles.json` (can be empty array: `[]`)
-3. Run `betterdocs deploy` again
+3. Run `elderdocs deploy` again
 
 ### Routes Not Working
 
 If `/docs` doesn't work:
 
-1. Check that the gem is properly loaded: `bundle list | grep better_docs`
+1. Check that the gem is properly loaded: `bundle list | grep elder_docs`
 2. Restart your Rails server
 3. Check Rails routes: `rails routes | grep docs`
 4. Verify the engine is mounted correctly
@@ -108,5 +108,5 @@ cd frontend
 npm run dev
 ```
 
-Note: In production, always use `betterdocs deploy` to generate static assets.
+Note: In production, always use `elderdocs deploy` to generate static assets.
 

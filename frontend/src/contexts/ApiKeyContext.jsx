@@ -13,7 +13,7 @@ export const useApiKey = () => {
 export const ApiKeyProvider = ({ children }) => {
   const [authConfig, setAuthConfig] = useState(() => {
     // Load from localStorage on mount
-    const saved = localStorage.getItem('betterdocs_auth_config')
+    const saved = localStorage.getItem('elderdocs_auth_config')
     if (saved) {
       try {
         return JSON.parse(saved)
@@ -27,9 +27,9 @@ export const ApiKeyProvider = ({ children }) => {
   useEffect(() => {
     // Save to localStorage whenever it changes
     if (authConfig) {
-      localStorage.setItem('betterdocs_auth_config', JSON.stringify(authConfig))
+      localStorage.setItem('elderdocs_auth_config', JSON.stringify(authConfig))
     } else {
-      localStorage.removeItem('betterdocs_auth_config')
+      localStorage.removeItem('elderdocs_auth_config')
     }
   }, [authConfig])
 

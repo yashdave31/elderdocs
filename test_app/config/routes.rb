@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  mount BetterDocs::Engine, at: '/docs'
+  mount ElderDocs::Engine, at: '/docs'
   
   # Handle Chrome DevTools requests (harmless, just silences the error)
   get '/.well-known/*path', to: proc { |_env| [404, {}, ['']] }

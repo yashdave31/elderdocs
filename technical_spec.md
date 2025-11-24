@@ -1,15 +1,15 @@
-BetterDocs: Interactive API Documentation Platform
+ElderDocs: Interactive API Documentation Platform
 
 1. Introduction and Project Goal
 
-Project Name: BetterDocs
+Project Name: ElderDocs
 Objective: To provide a highly interactive, modern, and minimalist API documentation solution that is easily deployed alongside Ruby on Rails applications. It converts standard OpenAPI specifications (definitions.json) and custom narrative content (articles.json) into a cohesive, single-page application (SPA) allowing users to directly interact with API endpoints.
 Packaging: Ruby Gem (for seamless integration into the Rails asset pipeline and rake tasks).
 Aesthetics: Modern, minimalist, and developer-centric design utilizing Tailwind CSS.
 
 2. Architecture and Data Flow
 
-BetterDocs uses a three-tier architecture: the CLI/Generator, the Data Layer, and the Frontend Viewer. The core principle is static generation for performance, with client-side JavaScript handling interactivity and API calls.
+ElderDocs uses a three-tier architecture: the CLI/Generator, the Data Layer, and the Frontend Viewer. The core principle is static generation for performance, with client-side JavaScript handling interactivity and API calls.
 
 2.1 Core Components
 
@@ -33,7 +33,7 @@ Generator/CLI
 
 Ruby, Thor Gem
 
-Native integration with the Rails ecosystem and command-line execution (e.g., betterdocs deploy).
+Native integration with the Rails ecosystem and command-line execution (e.g., elderdocs deploy).
 
 OpenAPI Parsing
 
@@ -112,9 +112,9 @@ Structure:
 
 4. Key Features and Implementation Details
 
-4.1 CLI Deployment (betterdocs deploy)
+4.1 CLI Deployment (elderdocs deploy)
 
-The betterdocs deploy command orchestrates the build process:
+The elderdocs deploy command orchestrates the build process:
 
 Validation: The Ruby CLI validates both definitions.json (against the OpenAPI schema) and articles.json (against the required custom structure).
 
@@ -122,7 +122,7 @@ Data Compilation: OpenAPI and Article data are compiled into a single, optimized
 
 Frontend Build: The command triggers the internal Vite/React build process, which bundles the SPA and integrates data.js.
 
-Asset Placement: The generated static assets (HTML, bundle.js, style.css) are placed into a directory within the Gem (e.g., lib/better_docs/assets/).
+Asset Placement: The generated static assets (HTML, bundle.js, style.css) are placed into a directory within the Gem (e.g., lib/elder_docs/assets/).
 
 4.2 Interactive API Explorer
 
@@ -152,38 +152,38 @@ Responsiveness: Full support for mobile devices, collapsing the right "Try It Ou
 
 5. Ruby Gem and Rails Compatibility
 
-BetterDocs will be packaged as a standard Ruby Gem, utilizing a Rails Engine to integrate the generated assets without requiring manual user configuration in the Rails host application.
+ElderDocs will be packaged as a standard Ruby Gem, utilizing a Rails Engine to integrate the generated assets without requiring manual user configuration in the Rails host application.
 
 5.1 Gem Structure
 
-better_docs_gem/
+elder_docs_gem/
 ├── lib/
-│   ├── better_docs.rb           # Gem initialization
-│   ├── better_docs/
+│   ├── elder_docs.rb           # Gem initialization
+│   ├── elder_docs/
 │   │   ├── engine.rb            # Rails Engine definition (Critical for integration)
 │   │   ├── cli.rb               # Thor CLI definitions
 │   │   └── generator.rb         # Data processing and build orchestration
-│   └── better_docs/assets/
+│   └── elder_docs/assets/
 │       └── viewer/              # Generated static React files (HTML, JS, CSS)
 │           └── index.html
 ├── frontend/
 │   └── src/                     # React source code (Not included in the final Gem)
 │       └── App.jsx
-└── better_docs.gemspec
+└── elder_docs.gemspec
 
 
 5.2 Rails Engine Integration (engine.rb)
 
-The BetterDocs::Engine module will automatically perform two key actions when the Gem is loaded into a Rails app:
+The ElderDocs::Engine module will automatically perform two key actions when the Gem is loaded into a Rails app:
 
-Asset Serving: It will instruct Rails to serve the static assets located in lib/better_docs/assets/viewer during deployment.
+Asset Serving: It will instruct Rails to serve the static assets located in lib/elder_docs/assets/viewer during deployment.
 
-Route Mounting: It will automatically mount the documentation viewer at a user-defined or default route (e.g., /docs) using mount BetterDocs::Engine, at: '/docs'.
+Route Mounting: It will automatically mount the documentation viewer at a user-defined or default route (e.g., /docs) using mount ElderDocs::Engine, at: '/docs'.
 
 5.3 Deployment Workflow
 
-Developer Action (Local/CI): The developer runs betterdocs deploy.
+Developer Action (Local/CI): The developer runs elderdocs deploy.
 
-Generator: The Ruby generator parses the JSON files, bundles the React SPA, and places the resulting static files into the Gem's asset directory (lib/better_docs/assets/viewer).
+Generator: The Ruby generator parses the JSON files, bundles the React SPA, and places the resulting static files into the Gem's asset directory (lib/elder_docs/assets/viewer).
 
 Rails Deployment: The host Rails application is deployed. Since the assets are part of the Gem, the Rails Asset Pipeline detects and serves them, making the documentation live at the configured route (e.g., yourdomain.com/docs).

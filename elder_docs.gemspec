@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-require_relative 'lib/better_docs/version'
+require_relative 'lib/elder_docs/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'better_docs'
-  spec.version       = BetterDocs::VERSION
-  spec.authors       = ['BetterDocs']
-  spec.email         = ['hello@betterdocs.dev']
+  spec.name          = 'elder_docs'
+  spec.version       = ElderDocs::VERSION
+  spec.authors       = ['ElderDocs']
+  spec.email         = ['yashdave00@gmail.com']
 
   spec.summary       = 'Interactive API documentation for Rails'
   spec.description   = 'Convert OpenAPI specs into beautiful, interactive documentation with live API testing'
-  spec.homepage      = 'https://github.com/yourusername/better_docs'
+  spec.homepage      = 'https://github.com/yashdave31/elder_docs'
   spec.license       = 'MIT'
 
-  spec.files         = Dir['lib/**/*', 'exe/**/*', 'README.md', 'LICENSE.txt', 'betterdocs.yml.example']
+  spec.files         = Dir['lib/**/*', 'exe/**/*', 'README.md', 'LICENSE.txt', 'elderdocs.yml.example']
   spec.bindir        = 'exe'
-  spec.executables   = ['betterdocs']
+  spec.executables   = ['elderdocs']
   spec.require_paths = ['lib']
 
   spec.required_ruby_version = '>= 2.7.0'

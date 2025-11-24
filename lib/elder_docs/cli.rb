@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'thor'
-require 'better_docs/generator'
+require 'elder_docs/generator'
 
-module BetterDocs
+module ElderDocs
   class CLI < Thor
     desc 'deploy', 'Generate and deploy API documentation'
     method_option :definitions, type: :string, default: 'definitions.json', aliases: '-d'
@@ -14,7 +14,7 @@ module BetterDocs
     method_option :force_build, type: :boolean, default: false, desc: 'Force rebuilding frontend assets'
     
     def deploy
-      say '🚀 Starting BetterDocs deployment...', :green
+      say '🚀 Starting ElderDocs deployment...', :green
       
       definitions_path = options[:definitions]
       articles_path = options[:articles]
@@ -52,9 +52,9 @@ module BetterDocs
       end
     end
     
-    desc 'version', 'Show BetterDocs version'
+    desc 'version', 'Show ElderDocs version'
     def version
-      say "BetterDocs version #{BetterDocs::VERSION}", :green
+      say "ElderDocs version #{ElderDocs::VERSION}", :green
     end
     
     default_task :deploy
@@ -62,7 +62,7 @@ module BetterDocs
     private
     
     def default_output_path
-      File.join(File.dirname(__FILE__), '..', '..', 'lib', 'better_docs', 'assets', 'viewer')
+      File.join(File.dirname(__FILE__), '..', '..', 'lib', 'elder_docs', 'assets', 'viewer')
     end
   end
 end

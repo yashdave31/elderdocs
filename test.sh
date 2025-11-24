@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# BetterDocs Test Script
+# ElderDocs Test Script
 # This script sets up and runs the test Rails app
 
 set -e
 
-echo "🚀 Setting up BetterDocs test environment..."
+echo "🚀 Setting up ElderDocs test environment..."
 
 cd "$(dirname "$0")/test_app"
 
@@ -21,14 +21,14 @@ echo "📦 Installing dependencies..."
 bundle install
 
 # Generate documentation
-echo "📚 Generating BetterDocs documentation..."
-bundle exec betterdocs deploy
+echo "📚 Generating ElderDocs documentation..."
+bundle exec elderdocs deploy
 
 # Start server
 echo "✅ Setup complete!"
 echo ""
 echo "🌐 Starting Rails server..."
-echo "📖 Visit http://localhost:3000/docs to see BetterDocs"
+echo "📖 Visit http://localhost:3000/docs to see ElderDocs"
 echo ""
 echo "Press Ctrl+C to stop the server"
 echo ""

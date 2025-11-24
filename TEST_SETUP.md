@@ -1,15 +1,15 @@
-# BetterDocs Test Setup Guide
+# ElderDocs Test Setup Guide
 
 ## Quick Test Setup
 
-Follow these steps to see BetterDocs in action with the test API:
+Follow these steps to see ElderDocs in action with the test API:
 
 ### Step 1: Copy Test Files
 
 Copy the test files to your Rails application root:
 
 ```bash
-# From the betterdocs directory
+# From the elderdocs directory
 cp examples/test-definitions.json /path/to/your/rails/app/definitions.json
 cp examples/test-articles.json /path/to/your/rails/app/articles.json
 ```
@@ -19,7 +19,7 @@ cp examples/test-articles.json /path/to/your/rails/app/articles.json
 In your Rails application's `Gemfile`:
 
 ```ruby
-gem 'better_docs', path: '/Users/yashdave00/Desktop/betterdocs'
+gem 'elder_docs', path: '/Users/yashdave00/Desktop/elderdocs'
 ```
 
 Then run:
@@ -31,7 +31,7 @@ bundle install
 ### Step 3: Generate Documentation
 
 ```bash
-bundle exec betterdocs deploy
+bundle exec elderdocs deploy
 ```
 
 ### Step 4: Mount the Engine
@@ -40,7 +40,7 @@ Add to your Rails `config/routes.rb`:
 
 ```ruby
 Rails.application.routes.draw do
-  mount BetterDocs::Engine, at: '/docs'
+  mount ElderDocs::Engine, at: '/docs'
   # ... your other routes
 end
 ```
@@ -76,7 +76,7 @@ The test API uses JSONPlaceholder (https://jsonplaceholder.typicode.com), which 
      ```json
      {
        "title": "My Test Post",
-       "body": "This is a test post created from BetterDocs!",
+       "body": "This is a test post created from ElderDocs!",
        "userId": 1
      }
      ```
@@ -127,7 +127,7 @@ Note: JSONPlaceholder doesn't actually require authentication, but you can see h
 
 ### Build Fails
 
-If `betterdocs deploy` fails:
+If `elderdocs deploy` fails:
 
 1. Make sure Node.js is installed: `node --version`
 2. Install frontend dependencies: `cd frontend && npm install`
@@ -155,7 +155,7 @@ Once you've tested with the example API:
 
 1. Replace `definitions.json` with your own OpenAPI spec
 2. Customize `articles.json` with your documentation
-3. Optionally create `betterdocs.yml` for configuration
+3. Optionally create `elderdocs.yml` for configuration
 4. Deploy to production!
 
 Enjoy your beautiful, simple API documentation! 🎉

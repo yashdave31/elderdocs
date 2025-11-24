@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# BetterDocs Test Runner
+# ElderDocs Test Runner
 # Runs the test Rails app
 
 cd "$(dirname "$0")/../test_app"
 
-echo "🚀 Starting BetterDocs test app..."
+echo "🚀 Starting ElderDocs test app..."
 echo ""
 
 # Check if bundle is installed
@@ -23,16 +23,16 @@ if [ ! -d "vendor/bundle" ] && [ ! -f ".bundle/config" ]; then
 fi
 
 # Generate documentation if needed
-if [ ! -f "../lib/better_docs/assets/viewer/index.html" ]; then
-    echo "📚 Generating BetterDocs documentation..."
-    bundle exec betterdocs deploy
+if [ ! -f "../lib/elder_docs/assets/viewer/index.html" ]; then
+    echo "📚 Generating ElderDocs documentation..."
+    bundle exec elderdocs deploy
     echo ""
 fi
 
 echo "✅ Ready!"
 echo ""
 echo "🌐 Starting Rails server..."
-echo "📖 Visit http://localhost:3000/docs to see BetterDocs"
+echo "📖 Visit http://localhost:3000/docs to see ElderDocs"
 echo ""
 echo "Press Ctrl+C to stop the server"
 echo ""

@@ -1,16 +1,16 @@
-# BetterDocs UI Customization Guide
+# ElderDocs UI Customization Guide
 
 ## Overview
 
-BetterDocs allows you to customize the visual appearance of your API documentation through a simple YAML configuration file (`betterdocs.yml`). You can customize fonts, colors, and button styles to match your brand.
+ElderDocs allows you to customize the visual appearance of your API documentation through a simple YAML configuration file (`elderdocs.yml`). You can customize fonts, colors, and button styles to match your brand.
 
 ## Configuration File Location
 
-Create a `betterdocs.yml` file in your Rails application root directory:
+Create a `elderdocs.yml` file in your Rails application root directory:
 
 ```bash
 # In your Rails app root
-touch betterdocs.yml
+touch elderdocs.yml
 ```
 
 ## UI Customization Options
@@ -76,7 +76,7 @@ ui:
 
 ## Complete Example
 
-Here's a complete `betterdocs.yml` example with all UI customization options:
+Here's a complete `elderdocs.yml` example with all UI customization options:
 
 ```yaml
 # Mount path
@@ -116,11 +116,11 @@ ui:
 
 ## Applying Changes
 
-After updating `betterdocs.yml`:
+After updating `elderdocs.yml`:
 
 1. **Rebuild the documentation:**
    ```bash
-   bundle exec betterdocs deploy
+   bundle exec elderdocs deploy
    ```
 
 2. **Restart your Rails server** (if running):
@@ -133,7 +133,7 @@ After updating `betterdocs.yml`:
 
 ## Default Theme
 
-If you don't specify UI customization, BetterDocs uses:
+If you don't specify UI customization, ElderDocs uses:
 
 - **Fonts:** Syne (heading), IBM Plex Sans (body)
 - **Colors:** Bright Yellow (#f8d447) and Black (#000000) on White (#ffffff)
@@ -156,11 +156,11 @@ If you don't specify UI customization, BetterDocs uses:
 
 **Colors not applying?**
 - Ensure hex color codes start with `#`
-- Run `bundle exec betterdocs deploy` after changes
+- Run `bundle exec elderdocs deploy` after changes
 - Clear browser cache and refresh
 
 **Changes not visible?**
-- Make sure you've rebuilt with `bundle exec betterdocs deploy`
+- Make sure you've rebuilt with `bundle exec elderdocs deploy`
 - Restart your Rails server
 - Hard refresh your browser (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows/Linux)
 

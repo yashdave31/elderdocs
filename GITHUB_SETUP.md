@@ -5,7 +5,7 @@
 1. **Create a new GitHub repository**
 
 ```bash
-# On GitHub, create a new repo named "better_docs"
+# On GitHub, create a new repo named "elder_docs"
 ```
 
 2. **Initialize git and push**
@@ -15,15 +15,15 @@ git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/better_docs.git
+git remote add origin https://github.com/YOUR_USERNAME/elder_docs.git
 git push -u origin main
 ```
 
 3. **Update homepage in gemspec**
 
-Edit `better_docs.gemspec` and replace:
+Edit `elder_docs.gemspec` and replace:
 ```ruby
-spec.homepage = 'https://github.com/YOUR_USERNAME/better_docs'
+spec.homepage = 'https://github.com/YOUR_USERNAME/elder_docs'
 ```
 
 ## Publishing to RubyGems
@@ -31,25 +31,25 @@ spec.homepage = 'https://github.com/YOUR_USERNAME/better_docs'
 1. **Build the gem**
 
 ```bash
-gem build better_docs.gemspec
+gem build elder_docs.gemspec
 ```
 
 2. **Push to RubyGems** (first time)
 
 ```bash
-gem push better_docs-0.1.0.gem
+gem push elder_docs-0.1.0.gem
 ```
 
 You'll need a RubyGems account and API key.
 
-3. **For updates**, bump version in `lib/better_docs/version.rb` and rebuild.
+3. **For updates**, bump version in `lib/elder_docs/version.rb` and rebuild.
 
 ## What's Included
 
 - ✅ Clean README.md
 - ✅ .gitignore (excludes node_modules, build artifacts, etc.)
 - ✅ LICENSE.txt (MIT)
-- ✅ betterdocs.yml.example (config template)
+- ✅ elderdocs.yml.example (config template)
 - ✅ All source code and assets
 
 ## What's Excluded (.gitignore)
