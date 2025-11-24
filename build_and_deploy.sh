@@ -130,7 +130,8 @@ echo ""
 # Step 6: Verify installation
 echo -e "${BLUE}🔍 Verifying installation...${NC}"
 if command -v elderdocs &> /dev/null; then
-  INSTALLED_VERSION=$(elderdocs version 2>&1 | grep -oP '\d+\.\d+\.\d+' || echo "unknown")
+  # Extract version number (works on both Linux and macOS)
+  INSTALLED_VERSION=$(elderdocs version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1 || echo "unknown")
   echo -e "${GREEN}✅ ElderDocs CLI is available (version: ${INSTALLED_VERSION})${NC}"
 else
   echo -e "${YELLOW}⚠️  Warning: elderdocs command not found in PATH${NC}"
