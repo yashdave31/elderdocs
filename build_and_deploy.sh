@@ -55,7 +55,7 @@ if [ ! -f "$VERSION_FILE" ]; then
   exit 1
 fi
 
-CURRENT_VERSION=$(grep -oP "VERSION = '\K[^']+" "$VERSION_FILE" || echo "unknown")
+CURRENT_VERSION=$(grep -o "VERSION = '[^']*'" "$VERSION_FILE" | sed "s/VERSION = '\(.*\)'/\1/" || echo "unknown")
 echo -e "${BLUE}📦 Current version: ${CURRENT_VERSION}${NC}"
 echo ""
 
