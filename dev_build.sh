@@ -27,10 +27,20 @@ echo ""
 
 # Install locally
 echo "📥 Installing locally..."
-gem install "${GEM_FILE}" --local --force
+# Install dependencies first (Rails will be provided by host app's Bundler)
+echo "Installing dependencies..."
+gem install thor -v '~> 1.2' --no-document 2>/dev/null || true
+gem install openapi_parser -v '~> 2.0' --no-document 2>/dev/null || true
+gem install json -v '~> 2.6' --no-document 2>/dev/null || true
+
+# Install gem with --ignore-dependencies since Rails is managed by host app's Bundler
+gem install "${GEM_FILE}" --local --force --ignore-dependencies --no-document
 
 echo ""
 echo "✅ Done! Your changes are now available locally."
+echo ""
+echo "Note: Rails dependency will be resolved by Bundler when you use this gem"
+echo "      in your Rails application (via Gemfile)."
 echo ""
 echo "To test in your Rails app:"
 echo "  1. cd /path/to/your/rails/app"
