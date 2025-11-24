@@ -16,20 +16,35 @@ function App() {
       const ui = data.ui_config
       
       if (ui.colors) {
-        if (ui.colors.primary) root.style.setProperty('--bd-primary', ui.colors.primary)
-        if (ui.colors.secondary) {
-          root.style.setProperty('--bd-secondary', ui.colors.secondary)
+        // Map config colors to CSS variable names used in index.css
+        if (ui.colors.primary) {
+          root.style.setProperty('--bd-yellow', ui.colors.primary)
+          root.style.setProperty('--bd-primary', ui.colors.primary) // Keep for compatibility
         }
-        if (ui.colors.background) root.style.setProperty('--bd-background', ui.colors.background)
-        if (ui.colors.surface) root.style.setProperty('--bd-surface', ui.colors.surface)
+        if (ui.colors.secondary) {
+          root.style.setProperty('--bd-charcoal', ui.colors.secondary)
+          root.style.setProperty('--bd-border', ui.colors.secondary)
+          root.style.setProperty('--bd-ink', ui.colors.secondary)
+          root.style.setProperty('--bd-secondary', ui.colors.secondary) // Keep for compatibility
+        }
+        if (ui.colors.background) {
+          root.style.setProperty('--bd-white', ui.colors.background)
+          root.style.setProperty('--bd-background', ui.colors.background) // Keep for compatibility
+        }
+        if (ui.colors.surface) {
+          root.style.setProperty('--bd-panel', ui.colors.surface)
+          root.style.setProperty('--bd-surface', ui.colors.surface) // Keep for compatibility
+        }
       }
       
       if (ui.corner_radius) {
-        root.style.setProperty('--bd-corner-radius', ui.corner_radius)
+        root.style.setProperty('--bd-radius', ui.corner_radius)
+        root.style.setProperty('--bd-corner-radius', ui.corner_radius) // Keep for compatibility
       }
       
       if (ui.font_heading) {
-        root.style.setProperty('--bd-font-heading', `'${ui.font_heading}', sans-serif`)
+        root.style.setProperty('--font-heading', `'${ui.font_heading}', sans-serif`)
+        root.style.setProperty('--bd-font-heading', `'${ui.font_heading}', sans-serif`) // Keep for compatibility
         // Dynamically load font
         const link = document.createElement('link')
         link.href = `https://fonts.googleapis.com/css2?family=${ui.font_heading.replace(/\s/g, '+')}:wght@500;600;700&display=swap`
@@ -40,7 +55,8 @@ function App() {
       }
       
       if (ui.font_body) {
-        root.style.setProperty('--bd-font-body', `'${ui.font_body}', sans-serif`)
+        root.style.setProperty('--font-body', `'${ui.font_body}', sans-serif`)
+        root.style.setProperty('--bd-font-body', `'${ui.font_body}', sans-serif`) // Keep for compatibility
         // Dynamically load font
         const link = document.createElement('link')
         link.href = `https://fonts.googleapis.com/css2?family=${ui.font_body.replace(/\s/g, '+')}:wght@400;500;600&display=swap`

@@ -147,13 +147,37 @@ const UiConfigurator = () => {
   
   const applyConfig = (newConfig) => {
     const root = document.documentElement
-    root.style.setProperty('--bd-primary', newConfig.colors.primary)
-    root.style.setProperty('--bd-secondary', newConfig.colors.secondary)
-    root.style.setProperty('--bd-background', newConfig.colors.background)
-    root.style.setProperty('--bd-surface', newConfig.colors.surface)
-    root.style.setProperty('--bd-corner-radius', newConfig.corner_radius)
-    root.style.setProperty('--bd-font-heading', `'${newConfig.font_heading}', sans-serif`)
-    root.style.setProperty('--bd-font-body', `'${newConfig.font_body}', sans-serif`)
+    // Map config colors to CSS variable names used in index.css
+    if (newConfig.colors.primary) {
+      root.style.setProperty('--bd-yellow', newConfig.colors.primary)
+      root.style.setProperty('--bd-primary', newConfig.colors.primary) // Keep for compatibility
+    }
+    if (newConfig.colors.secondary) {
+      root.style.setProperty('--bd-charcoal', newConfig.colors.secondary)
+      root.style.setProperty('--bd-border', newConfig.colors.secondary)
+      root.style.setProperty('--bd-ink', newConfig.colors.secondary)
+      root.style.setProperty('--bd-secondary', newConfig.colors.secondary) // Keep for compatibility
+    }
+    if (newConfig.colors.background) {
+      root.style.setProperty('--bd-white', newConfig.colors.background)
+      root.style.setProperty('--bd-background', newConfig.colors.background) // Keep for compatibility
+    }
+    if (newConfig.colors.surface) {
+      root.style.setProperty('--bd-panel', newConfig.colors.surface)
+      root.style.setProperty('--bd-surface', newConfig.colors.surface) // Keep for compatibility
+    }
+    if (newConfig.corner_radius) {
+      root.style.setProperty('--bd-radius', newConfig.corner_radius)
+      root.style.setProperty('--bd-corner-radius', newConfig.corner_radius) // Keep for compatibility
+    }
+    if (newConfig.font_heading) {
+      root.style.setProperty('--font-heading', `'${newConfig.font_heading}', sans-serif`)
+      root.style.setProperty('--bd-font-heading', `'${newConfig.font_heading}', sans-serif`) // Keep for compatibility
+    }
+    if (newConfig.font_body) {
+      root.style.setProperty('--font-body', `'${newConfig.font_body}', sans-serif`)
+      root.style.setProperty('--bd-font-body', `'${newConfig.font_body}', sans-serif`) // Keep for compatibility
+    }
     
     // Load fonts
     if (newConfig.font_heading) {
