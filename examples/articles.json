@@ -1,0 +1,19 @@
+[
+  {
+    "id": "getting_started",
+    "title": "1. Getting Started",
+    "markdown_content": "## Introduction\n\nWelcome to the Example API! This guide will help you get started with integrating our API into your application.\n\n## Prerequisites\n\nBefore you begin, make sure you have:\n\n- A valid API key\n- Basic understanding of REST APIs\n- HTTP client library (curl, Postman, or your preferred tool)\n\n## Quick Start\n\n1. **Get your API key** from the dashboard\n2. **Make your first request** using the API Explorer\n3. **Review the response** and start building!\n\n## Next Steps\n\n- Read about [Authentication](#authentication)\n- Explore the [API Reference](#api-reference)\n- Check out our [code examples](#code-examples)"
+  },
+  {
+    "id": "authentication",
+    "title": "2. Authentication",
+    "markdown_content": "## Authentication\n\nOur API uses Bearer Token authentication. Include your API key in the `Authorization` header of every request.\n\n### Using the API Key\n\n```bash\ncurl -H \"Authorization: Bearer YOUR_API_KEY\" \\\n     https://api.example.com/users\n```\n\n### Security Best Practices\n\n- **Never commit** your API key to version control\n- **Rotate keys** regularly\n- **Use environment variables** to store keys\n- **Limit key permissions** to only what's needed\n\n### Getting Your API Key\n\n1. Log in to your dashboard\n2. Navigate to Settings > API Keys\n3. Click \"Generate New Key\"\n4. Copy and store it securely\n\n> ⚠️ **Warning**: API keys are sensitive credentials. Treat them like passwords!"
+  },
+  {
+    "id": "users_endpoint",
+    "title": "Endpoint Guide: Users",
+    "related_path": "/users",
+    "markdown_content": "## Users Endpoint\n\nThe `/users` endpoint allows you to manage user accounts in the system.\n\n### Listing Users\n\nTo retrieve a list of all users:\n\n```bash\nGET /users\n```\n\n**Query Parameters:**\n\n- `page` (integer, optional): Page number (default: 1)\n- `per_page` (integer, optional): Items per page (default: 20)\n\n**Example Response:**\n\n```json\n{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\",\n      \"created_at\": \"2024-01-01T00:00:00Z\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"per_page\": 20,\n    \"total\": 100\n  }\n}\n```\n\n### Creating Users\n\nTo create a new user:\n\n```bash\nPOST /users\nContent-Type: application/json\n\n{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\"\n}\n```\n\n**Required Fields:**\n\n- `name` (string): User's full name\n- `email` (string): Valid email address\n\n### Error Handling\n\nAll errors follow a consistent format:\n\n```json\n{\n  \"error\": \"Error message\",\n  \"code\": \"ERROR_CODE\"\n}\n```\n\nCommon error codes:\n\n- `400`: Bad Request - Invalid input\n- `404`: Not Found - Resource doesn't exist\n- `401`: Unauthorized - Invalid or missing API key\n- `500`: Internal Server Error - Something went wrong"
+  }
+]
+

@@ -1,0 +1,49 @@
+# BetterDocs Configuration File
+# Copy this to betterdocs.yml in your Rails root directory
+
+# Mount path for the documentation (default: /docs)
+# If /docs is already taken, BetterDocs will try: /api-docs, /documentation, /api, /docs/api
+mount_path: /docs
+
+# Admin password for UI configuration page (/docs/ui)
+# Default: 'admin' (or set via BETTERDOCS_ADMIN_PASSWORD environment variable)
+# admin_password: your-secure-password-here
+
+# Default API server URL (overrides OpenAPI servers if set)
+# Leave empty to use the first server from your OpenAPI spec
+# api_server: https://api.example.com
+
+# Or define multiple environments:
+# api_servers:
+#   - url: https://api-sandbox.example.com
+#     description: Sandbox
+#   - url: https://api.example.com
+#     description: Production
+
+# Supported authentication types
+# Options: bearer, api_key, basic, oauth2
+auth_types:
+  - bearer
+  - api_key
+  - basic
+  - oauth2
+
+# UI Customization
+# Customize fonts, colors, and button styles
+ui:
+  # Font families for headings and body text
+  # Available fonts: Syne, Inter, Space Grotesk, Oswald, Fira Code, Roboto, Open Sans, IBM Plex Sans
+  font_heading: 'Syne'        # Font for headings, buttons, and UI elements
+  font_body: 'IBM Plex Sans' # Font for body text and content
+  
+  # Color palette
+  colors:
+    primary: '#f8d447'      # Primary accent color (buttons, highlights) - Bright Yellow
+    secondary: '#000000'    # Secondary color (text, borders) - Black
+    background: '#ffffff'   # Page background color - White
+    surface: '#ffffff'      # Panel/Card background color - White
+  
+  # Corner radius for all UI elements (buttons, cards, inputs)
+  # Examples: '0px' (sharp corners), '8px' (rounded), '99px' (pill-shaped)
+  corner_radius: '0px'
+

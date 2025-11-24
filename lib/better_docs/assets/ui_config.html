@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>BetterDocs - UI Configuration</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #fff; }
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+    .surface { background: #fff; border: 3px solid #000; padding: 2rem; margin-bottom: 1rem; }
+    .btn { padding: 0.75rem 1.5rem; border: 3px solid #000; background: #000; color: #fff; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+    .btn:hover { background: #333; }
+    .btn-secondary { background: #fff; color: #000; }
+    .input { width: 100%; padding: 0.5rem; border: 2px solid #000; margin-bottom: 1rem; }
+    .error { background: #fee; border: 2px solid #f00; padding: 1rem; margin-bottom: 1rem; color: #c00; }
+    .success { background: #efe; border: 2px solid #0a0; padding: 1rem; margin-bottom: 1rem; color: #060; }
+    h1 { font-size: 2rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.5rem; margin: 1.5rem 0 1rem; }
+    label { display: block; font-weight: bold; margin-bottom: 0.5rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .color-input { display: flex; gap: 0.5rem; }
+    .color-picker { width: 60px; height: 40px; border: 2px solid #000; cursor: pointer; }
+    .preview-section { background: #f9f9f9; border: 2px dashed #ccc; padding: 1rem; margin-top: 1rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function UiConfigurator() {
+      const [authenticated, setAuthenticated] = useState(false);
+      const [password, setPassword] = useState('');
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState('');
+      const [saved, setSaved] = useState(false);
+      
+      const [config, setConfig] = useState({
+        font_heading: 'Syne',
+        font_body: 'IBM Plex Sans',
+        colors: {
+          primary: '#f8d447',
+          secondary: '#000000',
+          background: '#ffffff',
+          surface: '#ffffff'
+        },
+        corner_radius: '0px'
+      });
+      
+      const availableFonts = ['Syne', 'IBM Plex Sans', 'Inter', 'Space Grotesk', 'Oswald', 'Fira Code', 'Roboto', 'Open Sans'];
+      
+      useEffect(() => {
+        checkAuth();
+      }, []);
+      
+      const checkAuth = async () => {
+        try {
+          const response = await fetch('/docs/ui', { credentials: 'include' });
+          if (response.ok) {
+            const data = await response.json();
+            setAuthenticated(true);
+            if (data.ui_config) {
+              setConfig({
+                font_heading: data.ui_config.font_heading || 'Syne',
+                font_body: data.ui_config.font_body || 'IBM Plex Sans',
+                colors: {
+                  primary: data.ui_config.colors?.primary || '#f8d447',
+                  secondary: data.ui_config.colors?.secondary || '#000000',
+                  background: data.ui_config.colors?.background || '#ffffff',
+                  surface: data.ui_config.colors?.surface || '#ffffff'
+                },
+                corner_radius: data.ui_config.corner_radius || '0px'
+              });
+            }
+          }
+        } catch (err) {
+          setAuthenticated(false);
+        }
+      };
+      
+      const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        
+        try {
+          const response = await fetch('/docs/ui/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password }),
+            credentials: 'include'
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+            setAuthenticated(true);
+            await checkAuth();
+          } else {
+            setError(data.error || 'Invalid password');
+          }
+        } catch (err) {
+          setError('Login failed. Please try again.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      const handleSave = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        setSaved(false);
+        
+        try {
+          const response = await fetch('/docs/ui/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              font_heading: config.font_heading,
+              font_body: config.font_body,
+              color_primary: config.colors.primary,
+              color_secondary: config.colors.secondary,
+              color_background: config.colors.background,
+              color_surface: config.colors.surface,
+              corner_radius: config.corner_radius
+            }),
+            credentials: 'include'
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+            setSaved(true);
+            setTimeout(() => setSaved(false), 3000);
+          } else {
+            setError(data.error || 'Failed to save configuration');
+          }
+        } catch (err) {
+          setError('Save failed. Please try again.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      const handleLogout = async () => {
+        try {
+          await fetch('/docs/ui/logout', { method: 'POST', credentials: 'include' });
+          setAuthenticated(false);
+          setPassword('');
+        } catch (err) {
+          console.error('Logout failed:', err);
+        }
+      };
+      
+      if (!authenticated) {
+        return (
+          <div className="container">
+            <div className="surface">
+              <h1>Admin Login</h1>
+              <form onSubmit={handleLogin}>
+                <label>Admin Password</label>
+                <input
+                  type="password"
+                  className="input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter admin password"
+                  required
+                />
+                {error && <div className="error">{error}</div>}
+                <button type="submit" className="btn" disabled={loading}>
+                  {loading ? 'Logging in...' : 'Login'}
+                </button>
+              </form>
+              <p style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#666' }}>
+                Default password: <code style={{ background: '#ffeb3b', padding: '2px 4px' }}>admin</code>
+                <br />
+                Or set via <code style={{ background: '#ffeb3b', padding: '2px 4px' }}>BETTERDOCS_ADMIN_PASSWORD</code> env var
+              </p>
+            </div>
+          </div>
+        );
+      }
+      
+      return (
+        <div className="container">
+          <div className="surface">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h1>UI Configuration</h1>
+              <button onClick={handleLogout} className="btn btn-secondary">Logout</button>
+            </div>
+            
+            {saved && <div className="success">✅ Configuration saved successfully! Refresh the main docs page to see changes.</div>}
+            {error && <div className="error">{error}</div>}
+            
+            <form onSubmit={handleSave}>
+              <h2>Typography</h2>
+              <div className="grid">
+                <div>
+                  <label>Heading Font</label>
+                  <select
+                    className="input"
+                    value={config.font_heading}
+                    onChange={(e) => setConfig({ ...config, font_heading: e.target.value })}
+                  >
+                    {availableFonts.map(font => <option key={font} value={font}>{font}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label>Body Font</label>
+                  <select
+                    className="input"
+                    value={config.font_body}
+                    onChange={(e) => setConfig({ ...config, font_body: e.target.value })}
+                  >
+                    {availableFonts.map(font => <option key={font} value={font}>{font}</option>)}
+                  </select>
+                </div>
+              </div>
+              
+              <h2>Colors</h2>
+              <div className="grid">
+                <div>
+                  <label>Primary Color</label>
+                  <div className="color-input">
+                    <input
+                      type="color"
+                      className="color-picker"
+                      value={config.colors.primary}
+                      onChange={(e) => setConfig({ ...config, colors: { ...config.colors, primary: e.target.value } })}
+                    />
+                    <input
+                      type="text"
+                      className="input"
+                      value={config.colors.primary}
+                      onChange={(e) => setConfig({ ...config, colors: { ...config.colors, primary: e.target.value } })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label>Secondary Color</label>
+                  <div className="color-input">
+                    <input
+                      type="color"
+                      className="color-picker"
+                      value={config.colors.secondary}
+                      onChange={(e) => setConfig({ ...config, colors: { ...config.colors, secondary: e.target.value } })}
+                    />
+                    <input
+                      type="text"
+                      className="input"
+                      value={config.colors.secondary}
+                      onChange={(e) => setConfig({ ...config, colors: { ...config.colors, secondary: e.target.value } })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label>Background Color</label>
+                  <div className="color-input">
+                    <input
+                      type="color"
+                      className="color-picker"
+                      value={config.colors.background}
+                      onChange={(e) => setConfig({ ...config, colors: { ...config.colors, background: e.target.value } })}
+                    />
+                    <input
+                      type="text"
+                      className="input"
+                      value={config.colors.background}
+                      onChange={(e) => setConfig({ ...config, colors: { ...config.colors, background: e.target.value } })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label>Surface Color</label>
+                  <div className="color-input">
+                    <input
+                      type="color"
+                      className="color-picker"
+                      value={config.colors.surface}
+                      onChange={(e) => setConfig({ ...config, colors: { ...config.colors, surface: e.target.value } })}
+                    />
+                    <input
+                      type="text"
+                      className="input"
+                      value={config.colors.surface}
+                      onChange={(e) => setConfig({ ...config, colors: { ...config.colors, surface: e.target.value } })}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <h2>Styling</h2>
+              <div>
+                <label>Corner Radius: {config.corner_radius}</label>
+                <input
+                  type="range"
+                  className="input"
+                  min="0"
+                  max="24"
+                  value={parseInt(config.corner_radius) || 0}
+                  onChange={(e) => setConfig({ ...config, corner_radius: `${e.target.value}px` })}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#666' }}>
+                  <span>Sharp (0px)</span>
+                  <span>Rounded (24px)</span>
+                </div>
+              </div>
+              
+              <h2>Live Preview</h2>
+              <PreviewPanel config={config} />
+              
+              <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
+                <button type="submit" className="btn" disabled={loading}>
+                  {loading ? 'Saving...' : 'Save Configuration'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+    
+    function PreviewPanel({ config }) {
+      const previewStyle = {
+        backgroundColor: config.colors.background,
+        border: `3px solid ${config.colors.secondary}`,
+        borderRadius: config.corner_radius,
+        padding: '1.5rem',
+        marginTop: '1rem'
+      };
+      
+      const headingStyle = {
+        fontFamily: `'${config.font_heading}', sans-serif`,
+        color: config.colors.secondary,
+        fontSize: '1.5rem',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        marginBottom: '1rem'
+      };
+      
+      const bodyStyle = {
+        fontFamily: `'${config.font_body}', sans-serif`,
+        color: config.colors.secondary,
+        fontSize: '0.9rem',
+        lineHeight: '1.6'
+      };
+      
+      const buttonStyle = {
+        fontFamily: `'${config.font_heading}', sans-serif`,
+        backgroundColor: config.colors.secondary,
+        color: config.colors.background,
+        border: `3px solid ${config.colors.secondary}`,
+        borderRadius: config.corner_radius,
+        padding: '0.6rem 1.2rem',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        cursor: 'pointer',
+        fontSize: '0.75rem',
+        marginRight: '0.5rem',
+        marginBottom: '0.5rem',
+        display: 'inline-block'
+      };
+      
+      const buttonPrimaryStyle = {
+        ...buttonStyle,
+        backgroundColor: config.colors.primary,
+        color: config.colors.secondary,
+        borderColor: config.colors.secondary,
+        boxShadow: `4px 4px 0px 0px ${config.colors.primary}`
+      };
+      
+      const chipStyle = {
+        fontFamily: `'${config.font_heading}', sans-serif`,
+        backgroundColor: config.colors.primary,
+        color: config.colors.secondary,
+        border: `2px solid ${config.colors.secondary}`,
+        borderRadius: config.corner_radius,
+        padding: '0.3rem 0.8rem',
+        fontSize: '0.7rem',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        display: 'inline-block',
+        marginRight: '0.5rem',
+        marginBottom: '0.5rem'
+      };
+      
+      const cardStyle = {
+        backgroundColor: config.colors.surface,
+        border: `3px solid ${config.colors.secondary}`,
+        borderRadius: config.corner_radius,
+        padding: '1rem',
+        marginBottom: '1rem',
+        boxShadow: `4px 4px 0px 0px ${config.colors.secondary}`
+      };
+      
+      const inputStyle = {
+        width: '100%',
+        padding: '0.5rem',
+        border: `2px solid ${config.colors.secondary}`,
+        borderRadius: config.corner_radius,
+        backgroundColor: config.colors.surface,
+        color: config.colors.secondary,
+        fontFamily: `'${config.font_body}', sans-serif`,
+        fontSize: '0.875rem',
+        marginBottom: '0.5rem'
+      };
+      
+      // Load fonts dynamically
+      React.useEffect(() => {
+        const loadFont = (fontName) => {
+          const link = document.createElement('link');
+          link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s/g, '+')}:wght@400;500;600;700&display=swap`;
+          link.rel = 'stylesheet';
+          if (!document.querySelector(`link[href*="${fontName}"]`)) {
+            document.head.appendChild(link);
+          }
+        };
+        loadFont(config.font_heading);
+        loadFont(config.font_body);
+      }, [config.font_heading, config.font_body]);
+      
+      return (
+        <div style={previewStyle}>
+          <div style={headingStyle}>API Documentation Preview</div>
+          
+          <div style={bodyStyle}>
+            This is how your documentation will look with the current settings.
+          </div>
+          
+          <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+            <span style={chipStyle}>GET</span>
+            <span style={chipStyle}>POST</span>
+            <span style={chipStyle}>API</span>
+          </div>
+          
+          <div style={cardStyle}>
+            <div style={{ ...headingStyle, fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+              /api/users/{'{id}'}
+            </div>
+            <div style={bodyStyle}>
+              Retrieve user information by ID. Returns detailed user profile including name, email, and preferences.
+            </div>
+            <div style={{ marginTop: '0.75rem' }}>
+              <button style={buttonPrimaryStyle}>Send Request</button>
+              <button style={buttonStyle}>View Details</button>
+            </div>
+          </div>
+          
+          <div style={{ marginTop: '1rem' }}>
+            <input
+              type="text"
+              placeholder="Enter API key..."
+              style={inputStyle}
+              readOnly
+            />
+            <div style={{ ...bodyStyle, fontSize: '0.8rem', color: config.colors.secondary + '80' }}>
+              Sample input field with your styling
+            </div>
+          </div>
+          
+          <div style={{ marginTop: '1rem', padding: '0.75rem', backgroundColor: config.colors.primary + '20', border: `2px solid ${config.colors.primary}`, borderRadius: config.corner_radius }}>
+            <div style={{ ...bodyStyle, fontSize: '0.85rem' }}>
+              <strong>💡 Tip:</strong> This preview updates in real-time as you change settings. 
+              Your actual documentation will look like this after saving.
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    ReactDOM.render(<UiConfigurator />, document.getElementById('root'));
+  </script>
+</body>
+</html>
+

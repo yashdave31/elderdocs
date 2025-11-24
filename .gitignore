@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+vendor/bundle/
+.bundle/
+
+# Build outputs
+frontend/dist/
+frontend/node_modules/
+lib/better_docs/assets/viewer/
+
+# Test app
+test_app/vendor/
+test_app/tmp/
+test_app/log/
+test_app/.bundle/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug
+debug-screenshot.png
+*.log
+
+# Config (user-specific)
+betterdocs.yml
+
+# Build artifacts
+*.gem
+*.lock

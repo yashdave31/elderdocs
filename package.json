@@ -1,0 +1,19 @@
+{
+  "name": "betterdocs",
+  "version": "1.0.0",
+  "description": "BetterDocs is an interactive API documentation platform for Ruby on Rails applications. It converts OpenAPI specifications and custom narrative content into a beautiful, modern single-page application (SPA) that allows users to directly interact with your API endpoints.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}

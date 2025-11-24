@@ -1,0 +1,18 @@
+[
+  {
+    "id": "getting_started",
+    "title": "🚀 Getting Started",
+    "markdown_content": "# Welcome to BetterDocs!\n\nThis is a **dead simple** API documentation platform.\n\n## Quick Start\n\n1. **Select an endpoint** from the sidebar\n2. **Fill in parameters** (if needed)\n3. **Click SEND REQUEST**\n4. **See the response** instantly\n\nThat's it! No complicated setup needed.\n\n## Features\n\n- ✅ **Interactive API Explorer** - Try endpoints right in your browser\n- ✅ **Multiple Auth Types** - Bearer tokens, API keys, Basic auth, OAuth2\n- ✅ **Beautiful Design** - Bright yellow and white with sharp corners\n- ✅ **Big Fonts** - Easy to read, easy to use\n- ✅ **Real-time Testing** - See responses immediately\n\n## Authentication\n\nChoose your authentication method from the dropdown:\n\n- **Bearer Token**: Standard OAuth2 bearer tokens\n- **API Key Header**: Custom API key headers\n- **Basic Auth**: Username:password format\n- **OAuth 2.0**: OAuth token support\n\nEnter your credentials once, and they'll be saved for all requests!"
+  },
+  {
+    "id": "api_basics",
+    "title": "📖 API Basics",
+    "markdown_content": "## Understanding HTTP Methods\n\n### GET\n\nUse GET to **retrieve** data. It's safe and doesn't modify anything.\n\n```bash\nGET /posts\n```\n\n### POST\n\nUse POST to **create** new resources.\n\n```bash\nPOST /posts\nContent-Type: application/json\n\n{\n  \"title\": \"My Post\",\n  \"body\": \"Content here\",\n  \"userId\": 1\n}\n```\n\n### PUT\n\nUse PUT to **replace** an entire resource.\n\n```bash\nPUT /posts/1\n```\n\n### PATCH\n\nUse PATCH to **partially update** a resource.\n\n```bash\nPATCH /posts/1\n```\n\n### DELETE\n\nUse DELETE to **remove** a resource.\n\n```bash\nDELETE /posts/1\n```\n\n## Response Codes\n\n- **200 OK**: Success!\n- **201 Created**: Resource created\n- **400 Bad Request**: Invalid input\n- **404 Not Found**: Resource doesn't exist\n- **500 Server Error**: Something went wrong"
+  },
+  {
+    "id": "testing_tips",
+    "title": "💡 Testing Tips",
+    "markdown_content": "## Pro Tips for Testing\n\n### 1. Start Simple\n\nBegin with GET requests - they're the easiest!\n\n### 2. Check Required Fields\n\nRequired parameters are marked with a red asterisk (*).\n\n### 3. Use Examples\n\nMany endpoints have example payloads. Copy and modify them!\n\n### 4. Read the Response\n\nThe response shows:\n\n- **Status code** (200, 404, etc.)\n- **Response time** (how fast the API responded)\n- **Response body** (the actual data)\n\n### 5. Try Different Auth Methods\n\nSwitch between authentication types to see which works best for your API.\n\n### 6. Path Parameters\n\nFor endpoints like `/posts/{id}`, enter the ID in the Path Parameters section.\n\n### 7. Query Parameters\n\nAdd filters and pagination using Query Parameters.\n\n## Common Issues\n\n**CORS Error?**\n\nSome APIs block browser requests. Use a CORS proxy or test from your backend.\n\n**401 Unauthorized?**\n\nCheck your authentication credentials.\n\n**404 Not Found?**\n\nVerify the endpoint path and any path parameters."
+  }
+]
+

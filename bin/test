@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# BetterDocs Test Runner
+# Runs the test Rails app
+
+cd "$(dirname "$0")/../test_app"
+
+echo "🚀 Starting BetterDocs test app..."
+echo ""
+
+# Check if bundle is installed
+if ! command -v bundle &> /dev/null; then
+    echo "❌ Error: Bundler is not installed."
+    echo "   Install it with: gem install bundler"
+    exit 1
+fi
+
+# Install gems if needed
+if [ ! -d "vendor/bundle" ] && [ ! -f ".bundle/config" ]; then
+    echo "📦 Installing dependencies..."
+    bundle install
+    echo ""
+fi
+
+# Generate documentation if needed
+if [ ! -f "../lib/better_docs/assets/viewer/index.html" ]; then
+    echo "📚 Generating BetterDocs documentation..."
+    bundle exec betterdocs deploy
+    echo ""
+fi
+
+echo "✅ Ready!"
+echo ""
+echo "🌐 Starting Rails server..."
+echo "📖 Visit http://localhost:3000/docs to see BetterDocs"
+echo ""
+echo "Press Ctrl+C to stop the server"
+echo ""
+
+bundle exec rails server -p 3000
+
