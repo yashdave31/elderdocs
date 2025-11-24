@@ -1,6 +1,6 @@
-# BetterDocs Test App
+# ElderDocs Test App
 
-This is a minimal Rails application for testing BetterDocs.
+This is a minimal Rails application for testing ElderDocs.
 
 ## Setup
 
@@ -10,9 +10,9 @@ cd test_app
 bundle install
 ```
 
-2. Generate BetterDocs documentation:
+2. Generate ElderDocs documentation:
 ```bash
-bundle exec betterdocs deploy
+bundle exec elderdocs deploy
 ```
 
 3. Start the Rails server:
@@ -29,11 +29,11 @@ bundle exec rails server
 - `definitions.json` - OpenAPI specification for testing
 - `articles.json` - Sample documentation articles
 
-These files are automatically used when you run `betterdocs deploy` from this directory.
+These files are automatically used when you run `elderdocs deploy` from this directory.
 
 ## Troubleshooting
 
 If you get errors:
-1. Make sure you've run `bundle exec betterdocs deploy` first
-2. Check that assets exist: `ls -la ../lib/better_docs/assets/viewer/`
+1. Make sure you've run `bundle exec elderdocs deploy` first
+2. Check that assets exist: `ls -la ../lib/elder_docs/assets/viewer/`
 3. Check Rails logs: `tail -f log/development.log`

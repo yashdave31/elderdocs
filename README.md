@@ -1,4 +1,4 @@
-# BetterDocs
+# ElderDocs
 
 Interactive API documentation for Rails. Convert your OpenAPI spec into a beautiful, testable documentation site.
 
@@ -15,7 +15,7 @@ Interactive API documentation for Rails. Convert your OpenAPI spec into a beauti
 Add to your `Gemfile`:
 
 ```ruby
-gem 'better_docs'
+gem 'elder_docs'
 ```
 
 Then:
@@ -68,14 +68,14 @@ Create `articles.json`:
 ### 3. Generate docs
 
 ```bash
-bundle exec betterdocs deploy
+bundle exec elderdocs deploy
 ```
 
 ### 4. Mount in routes
 
 ```ruby
 # config/routes.rb
-mount BetterDocs::Engine, at: '/docs'
+mount ElderDocs::Engine, at: '/docs'
 ```
 
 ### 5. Visit
@@ -86,11 +86,11 @@ Open `http://localhost:3000/docs` 🎉
 
 Visit `/docs/ui` to customize fonts, colors, and styling with a visual editor.
 
-**Default password:** `admin` (or set `admin_password` in `betterdocs.yml`)
+**Default password:** `admin` (or set `admin_password` in `elderdocs.yml`)
 
 ## Configuration
 
-Create `betterdocs.yml` in your Rails root:
+Create `elderdocs.yml` in your Rails root:
 
 ```yaml
 # API server URL
@@ -128,7 +128,7 @@ admin_password: your-secure-password
 ## CLI Options
 
 ```bash
-bundle exec betterdocs deploy \
+bundle exec elderdocs deploy \
   --definitions custom.json \
   --articles guides.json \
   --api-server https://api.example.com

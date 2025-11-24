@@ -98,7 +98,7 @@ const Sidebar = ({ data, activeView, setActiveView, selectedItem, setSelectedIte
   return (
     <div className="w-80 surface border-r-0 border-black/10 flex flex-col h-full relative overflow-hidden" style={{ borderRightWidth: '3px' }}>
       <div className="p-6 border-b-0 border-black/10 relative" style={{ borderBottomWidth: '3px' }}>
-        <div className="pill text-[0.65rem] text-black mb-3 bg-white">BetterDocs</div>
+        <div className="pill text-[0.65rem] text-black mb-3 bg-white">ElderDocs</div>
         <h1 className="font-black text-3xl tracking-tight text-black uppercase font-['Syne']">API Space</h1>
         <div className="mt-4 mb-2">
           <a

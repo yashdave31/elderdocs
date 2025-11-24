@@ -18,15 +18,15 @@ const { chromium } = require('@playwright/test');
     // Wait for React to load
     await page.waitForTimeout(2000);
     
-    // Check if BetterDocsData exists
+    // Check if ElderDocsData exists
     const hasData = await page.evaluate(() => {
-      return typeof window.BetterDocsData !== 'undefined';
+      return typeof window.ElderDocsData !== 'undefined';
     });
-    console.log('BetterDocsData exists:', hasData);
+    console.log('ElderDocsData exists:', hasData);
     
     if (hasData) {
       const dataInfo = await page.evaluate(() => {
-        const data = window.BetterDocsData;
+        const data = window.ElderDocsData;
         return {
           hasOpenAPI: !!data.openapi,
           hasArticles: !!data.articles,
@@ -55,7 +55,7 @@ const { chromium } = require('@playwright/test');
         const content = document.body.innerText;
         return {
           hasGettingStarted: content.includes('Getting Started'),
-          hasWelcome: content.includes('Welcome to BetterDocs'),
+          hasWelcome: content.includes('Welcome to ElderDocs'),
           hasApiBasics: content.includes('API Basics'),
           bodyText: content.substring(0, 500)
         };

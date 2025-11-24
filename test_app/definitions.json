@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Test API - BetterDocs Demo",
+    "title": "Test API - ElderDocs Demo",
     "version": "1.0.0",
-    "description": "A comprehensive test API showcasing various endpoints, methods, and payloads for BetterDocs demonstration"
+    "description": "A comprehensive test API showcasing various endpoints, methods, and payloads for ElderDocs demonstration"
   },
   "servers": [
     {

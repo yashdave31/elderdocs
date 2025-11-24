@@ -1,4 +1,4 @@
-# Testing BetterDocs
+# Testing ElderDocs
 
 ## Quick Test
 
@@ -10,7 +10,7 @@ Run the test script:
 
 This will:
 1. Install dependencies
-2. Generate BetterDocs documentation
+2. Generate ElderDocs documentation
 3. Start a Rails server
 4. Open http://localhost:3000/docs in your browser
 
@@ -28,7 +28,7 @@ bundle install
 
 3. Generate documentation:
 ```bash
-bundle exec betterdocs deploy
+bundle exec elderdocs deploy
 ```
 
 4. Start server:
@@ -70,7 +70,7 @@ These use the JSONPlaceholder API (https://jsonplaceholder.typicode.com) which i
 ```json
 {
   "title": "My Test Post",
-  "body": "Testing BetterDocs!",
+  "body": "Testing ElderDocs!",
   "userId": 1
 }
 ```
@@ -92,7 +92,7 @@ ruby --version
 gem install bundler
 ```
 
-### BetterDocs Deploy Fails
+### ElderDocs Deploy Fails
 Make sure Node.js is installed:
 ```bash
 node --version

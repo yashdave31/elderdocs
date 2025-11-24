@@ -208,7 +208,7 @@ const UiConfigurator = () => {
             </button>
           </form>
           <p className="mt-4 text-xs text-black/60">
-            Default password: <code className="bg-yellow-100 px-1">admin</code> (or set via <code className="bg-yellow-100 px-1">BETTERDOCS_ADMIN_PASSWORD</code> env var)
+            Default password: <code className="bg-yellow-100 px-1">admin</code> (or set via <code className="bg-yellow-100 px-1">ELDERDOCS_ADMIN_PASSWORD</code> env var)
           </p>
         </div>
       </div>

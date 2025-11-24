@@ -1,7 +1,7 @@
 {
-  "name": "betterdocs",
+  "name": "elderdocs",
   "version": "1.0.0",
-  "description": "BetterDocs is an interactive API documentation platform for Ruby on Rails applications. It converts OpenAPI specifications and custom narrative content into a beautiful, modern single-page application (SPA) that allows users to directly interact with your API endpoints.",
+  "description": "ElderDocs is an interactive API documentation platform for Ruby on Rails applications. It converts OpenAPI specifications and custom narrative content into a beautiful, modern single-page application (SPA) that allows users to directly interact with your API endpoints.",
   "main": "index.js",
   "directories": {
     "example": "examples",

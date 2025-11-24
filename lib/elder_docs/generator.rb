@@ -4,7 +4,7 @@ require 'json'
 require 'openapi_parser'
 require 'fileutils'
 
-module BetterDocs
+module ElderDocs
   class Generator
     class ValidationError < StandardError; end
     
@@ -156,22 +156,22 @@ module BetterDocs
       say '📦 Compiling data...', :cyan
       
       # Get API server from: CLI option > config file > OpenAPI servers
-      final_api_server = api_server || BetterDocs.config.api_server || extract_api_server_from_openapi
-      final_api_servers = BetterDocs.config.api_servers || []
+      final_api_server = api_server || ElderDocs.config.api_server || extract_api_server_from_openapi
+      final_api_servers = ElderDocs.config.api_servers || []
       
       compiled_data = {
         openapi: @openapi_data,
         articles: @articles_data,
         api_server: final_api_server,
         api_servers: final_api_servers,
-        auth_types: BetterDocs.config.auth_types || ['bearer', 'api_key', 'basic', 'oauth2'],
-        ui_config: BetterDocs.config.ui_config || {},
+        auth_types: ElderDocs.config.auth_types || ['bearer', 'api_key', 'basic', 'oauth2'],
+        ui_config: ElderDocs.config.ui_config || {},
         generated_at: Time.now.iso8601
       }
       
       @compiled_data_js = <<~JS
-        window.BetterDocsData = #{compiled_data.to_json};
-        window.dispatchEvent(new Event('betterdocs:data_loaded'));
+        window.ElderDocsData = #{compiled_data.to_json};
+        window.dispatchEvent(new Event('elderdocs:data_loaded'));
       JS
       
       say '✅ Data compiled', :green

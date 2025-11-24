@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module BetterDocs
+module ElderDocs
   class Engine < ::Rails::Engine
-    isolate_namespace BetterDocs
+    isolate_namespace ElderDocs
     
     # Define routes inline
     routes do
@@ -21,8 +21,8 @@ module BetterDocs
     
     # Note: Engine must be manually mounted in routes.rb
     # We provide a helper to check for conflicts
-    initializer 'better_docs.check_routes' do |app|
-      mount_path = BetterDocs.config.mount_path || '/docs'
+    initializer 'elder_docs.check_routes' do |app|
+      mount_path = ElderDocs.config.mount_path || '/docs'
       
       # Check if route already exists when routes are loaded
       app.config.after_initialize do
@@ -30,7 +30,7 @@ module BetterDocs
           # Try to generate URL helper for the mount path
           route_name = mount_path.gsub('/', '_').gsub('-', '_').sub(/^_/, '')
           if app.routes.url_helpers.respond_to?("#{route_name}_path")
-            Rails.logger.warn "BetterDocs: Route #{mount_path} already exists. Please mount manually in config/routes.rb with a different path."
+            Rails.logger.warn "ElderDocs: Route #{mount_path} already exists. Please mount manually in config/routes.rb with a different path."
           end
         rescue => e
           # Route doesn't exist, which is fine
@@ -47,7 +47,7 @@ module BetterDocs
       include ActionController::MimeResponds
       
       def show
-        viewer_path = Engine.root.join('lib', 'better_docs', 'assets', 'viewer')
+        viewer_path = Engine.root.join('lib', 'elder_docs', 'assets', 'viewer')
         requested_path = params[:path]
         requested_path = requested_path.present? ? requested_path : 'index'
         requested_path = [requested_path, params[:format]].compact.join('.')

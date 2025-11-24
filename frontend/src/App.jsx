@@ -79,8 +79,8 @@ function App() {
     }
     
     const tryInitialize = () => {
-      if (window.BetterDocsData) {
-        initializeData(window.BetterDocsData)
+      if (window.ElderDocsData) {
+        initializeData(window.ElderDocsData)
         return true
       }
       return false
@@ -88,23 +88,23 @@ function App() {
     
     if (!tryInitialize()) {
       const handleDataLoaded = () => {
-        if (window.BetterDocsData) {
-          initializeData(window.BetterDocsData)
+        if (window.ElderDocsData) {
+          initializeData(window.ElderDocsData)
         }
       }
       
-      window.addEventListener('betterdocs:data_loaded', handleDataLoaded)
+      window.addEventListener('elderdocs:data_loaded', handleDataLoaded)
       
       // Fallback timeout so we don't wait forever
       const timeoutId = setTimeout(() => {
-        if (!window.BetterDocsData) {
-          console.error('BetterDocsData not found. Make sure data.js is loaded.')
+        if (!window.ElderDocsData) {
+          console.error('ElderDocsData not found. Make sure data.js is loaded.')
           setLoading(false)
         }
       }, 5000)
       
       return () => {
-        window.removeEventListener('betterdocs:data_loaded', handleDataLoaded)
+        window.removeEventListener('elderdocs:data_loaded', handleDataLoaded)
         clearTimeout(timeoutId)
       }
     }

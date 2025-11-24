@@ -1,6 +1,6 @@
 # Quick Test Guide
 
-Test BetterDocs right from the gem directory - no external Rails app needed!
+Test ElderDocs right from the gem directory - no external Rails app needed!
 
 ## Option 1: Use the Test Script (Easiest)
 
@@ -12,7 +12,7 @@ Just run:
 
 This will automatically:
 1. Install dependencies
-2. Generate BetterDocs documentation  
+2. Generate ElderDocs documentation  
 3. Start the Rails server
 4. Open http://localhost:3000/docs
 
@@ -30,7 +30,7 @@ bundle install
 
 3. **Generate documentation:**
 ```bash
-bundle exec betterdocs deploy
+bundle exec elderdocs deploy
 ```
 
 4. **Start server:**

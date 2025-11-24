@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-module BetterDocs
+module ElderDocs
   class Config
     attr_accessor :mount_path, :api_server, :auth_types, :ui_config, :admin_password
     
@@ -20,10 +20,10 @@ module BetterDocs
       config_paths = []
       
       if defined?(Rails) && Rails.root
-        config_paths << Rails.root.join('betterdocs.yml').to_s
+        config_paths << Rails.root.join('elderdocs.yml').to_s
       end
       
-      config_paths << File.join(Dir.pwd, 'betterdocs.yml')
+      config_paths << File.join(Dir.pwd, 'elderdocs.yml')
       
       config_path = config_paths.find { |path| File.exist?(path) }
       return unless config_path
@@ -37,7 +37,7 @@ module BetterDocs
           @ui_config = config['ui'] if config['ui']  # YAML uses 'ui' key, but we store as ui_config
           @admin_password = config['admin_password'] if config['admin_password']
         rescue => e
-          warn "Warning: Could not load betterdocs.yml: #{e.message}"
+          warn "Warning: Could not load elderdocs.yml: #{e.message}"
         end
       end
       
