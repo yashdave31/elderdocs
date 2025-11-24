@@ -71,6 +71,7 @@ Create `articles.json`:
 bundle exec elderdocs deploy
 ```
 
+This builds the SPA into `public/elderdocs` (configurable via `output_path`) so the assets live alongside your application code.
 ### 4. Mount in routes
 
 ```ruby
@@ -123,6 +124,9 @@ ui:
 
 # Admin password for /docs/ui
 admin_password: your-secure-password
+
+# Where to write generated assets (relative paths are resolved from Rails.root)
+output_path: ./public/elderdocs
 ```
 
 ## CLI Options
@@ -131,7 +135,8 @@ admin_password: your-secure-password
 bundle exec elderdocs deploy \
   --definitions custom.json \
   --articles guides.json \
-  --api-server https://api.example.com
+  --api-server https://api.example.com \
+  --output public/custom-docs
 ```
 
 ## Requirements

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pathname'
+
 module ElderDocs
   class Engine < ::Rails::Engine
     isolate_namespace ElderDocs
@@ -47,7 +49,7 @@ module ElderDocs
       include ActionController::MimeResponds
       
       def show
-        viewer_path = Engine.root.join('lib', 'elder_docs', 'assets', 'viewer')
+        viewer_path = resolve_viewer_path
         requested_path = params[:path]
         requested_path = requested_path.present? ? requested_path : 'index'
         requested_path = [requested_path, params[:format]].compact.join('.')
@@ -68,6 +70,19 @@ module ElderDocs
       end
       
       private
+      
+      def resolve_viewer_path
+        custom_path = ElderDocs.config.output_path
+        if custom_path && Dir.exist?(custom_path)
+          Pathname.new(custom_path)
+        else
+          fallback_viewer_path
+        end
+      end
+      
+      def fallback_viewer_path
+        Engine.root.join('lib', 'elder_docs', 'assets', 'viewer')
+      end
       
       def mime_type_for(file_path)
         ext = File.extname(file_path.to_s)

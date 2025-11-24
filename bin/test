@@ -23,7 +23,7 @@ if [ ! -d "vendor/bundle" ] && [ ! -f ".bundle/config" ]; then
 fi
 
 # Generate documentation if needed
-if [ ! -f "../lib/elder_docs/assets/viewer/index.html" ]; then
+if [ ! -f "public/elderdocs/index.html" ]; then
     echo "📚 Generating ElderDocs documentation..."
     bundle exec elderdocs deploy
     echo ""

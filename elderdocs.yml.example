@@ -5,6 +5,9 @@
 # If /docs is already taken, ElderDocs will try: /api-docs, /documentation, /api, /docs/api
 mount_path: /docs
 
+# Output directory for generated assets (relative to your Rails root)
+output_path: ./public/elderdocs
+
 # Admin password for UI configuration page (/docs/ui)
 # Default: 'admin' (or set via ELDERDOCS_ADMIN_PASSWORD environment variable)
 # admin_password: your-secure-password-here

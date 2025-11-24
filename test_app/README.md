@@ -35,5 +35,5 @@ These files are automatically used when you run `elderdocs deploy` from this dir
 
 If you get errors:
 1. Make sure you've run `bundle exec elderdocs deploy` first
-2. Check that assets exist: `ls -la ../lib/elder_docs/assets/viewer/`
+2. Check that assets exist: `ls -la public/elderdocs/`
 3. Check Rails logs: `tail -f log/development.log`

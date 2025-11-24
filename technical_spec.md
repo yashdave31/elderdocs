@@ -122,7 +122,7 @@ Data Compilation: OpenAPI and Article data are compiled into a single, optimized
 
 Frontend Build: The command triggers the internal Vite/React build process, which bundles the SPA and integrates data.js.
 
-Asset Placement: The generated static assets (HTML, bundle.js, style.css) are placed into a directory within the Gem (e.g., lib/elder_docs/assets/).
+Asset Placement: The generated static assets (HTML, bundle.js, style.css) are placed into the host application's configured output directory (default `public/elderdocs`) so they deploy with the app.
 
 4.2 Interactive API Explorer
 
@@ -163,8 +163,8 @@ elder_docs_gem/
 │   │   ├── engine.rb            # Rails Engine definition (Critical for integration)
 │   │   ├── cli.rb               # Thor CLI definitions
 │   │   └── generator.rb         # Data processing and build orchestration
-│   └── elder_docs/assets/
-│       └── viewer/              # Generated static React files (HTML, JS, CSS)
+│   └── elder_docs/assets/       # Ships fallback viewer used if host assets missing
+│       └── viewer/
 │           └── index.html
 ├── frontend/
 │   └── src/                     # React source code (Not included in the final Gem)
@@ -176,7 +176,7 @@ elder_docs_gem/
 
 The ElderDocs::Engine module will automatically perform two key actions when the Gem is loaded into a Rails app:
 
-Asset Serving: It will instruct Rails to serve the static assets located in lib/elder_docs/assets/viewer during deployment.
+Asset Serving: It will instruct Rails to serve the static assets located in the host application's `public/elderdocs` directory (or a configured path) during deployment.
 
 Route Mounting: It will automatically mount the documentation viewer at a user-defined or default route (e.g., /docs) using mount ElderDocs::Engine, at: '/docs'.
 
@@ -184,6 +184,6 @@ Route Mounting: It will automatically mount the documentation viewer at a user-d
 
 Developer Action (Local/CI): The developer runs elderdocs deploy.
 
-Generator: The Ruby generator parses the JSON files, bundles the React SPA, and places the resulting static files into the Gem's asset directory (lib/elder_docs/assets/viewer).
+Generator: The Ruby generator parses the JSON files, bundles the React SPA, and places the resulting static files into the host application's configured output directory (default: `public/elderdocs`).
 
 Rails Deployment: The host Rails application is deployed. Since the assets are part of the Gem, the Rails Asset Pipeline detects and serves them, making the documentation live at the configured route (e.g., yourdomain.com/docs).

@@ -37,7 +37,7 @@ This will:
 - Validate your JSON files
 - Compile the data
 - Build the React frontend
-- Place assets in the gem directory
+- Place assets in `public/elderdocs` (configurable via `output_path`)
 
 ### Step 4: Mount the Engine (Optional)
 

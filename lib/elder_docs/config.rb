@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 require 'yaml'
+require 'pathname'
 
 module ElderDocs
   class Config
-    attr_accessor :mount_path, :api_server, :auth_types, :ui_config, :admin_password
+    attr_accessor :mount_path, :api_server, :auth_types, :ui_config, :admin_password, :output_path
     
     def initialize
       @mount_path = nil
@@ -12,6 +13,8 @@ module ElderDocs
       @auth_types = ['bearer', 'api_key', 'basic', 'oauth2']
       @ui_config = {}
       @admin_password = nil
+      @api_servers = []
+      @output_path = default_output_path
       load_config_file
     end
     
@@ -29,19 +32,34 @@ module ElderDocs
       return unless config_path
       
       begin
-          config = YAML.load_file(config_path)
-          @mount_path = config['mount_path'] if config['mount_path']
-          @api_server = config['api_server'] if config['api_server']
-          @api_servers = config['api_servers'] if config['api_servers']
-          @auth_types = config['auth_types'] if config['auth_types']
-          @ui_config = config['ui'] if config['ui']  # YAML uses 'ui' key, but we store as ui_config
-          @admin_password = config['admin_password'] if config['admin_password']
-        rescue => e
-          warn "Warning: Could not load elderdocs.yml: #{e.message}"
+        config = YAML.load_file(config_path)
+        config_dir = File.dirname(config_path)
+        @mount_path = config['mount_path'] if config['mount_path']
+        @api_server = config['api_server'] if config['api_server']
+        @api_servers = config['api_servers'] if config['api_servers']
+        @auth_types = config['auth_types'] if config['auth_types']
+        @ui_config = config['ui'] if config['ui']  # YAML uses 'ui' key, but we store as ui_config
+        @admin_password = config['admin_password'] if config['admin_password']
+        if config['output_path']
+          @output_path = File.expand_path(config['output_path'], config_dir)
         end
+      rescue => e
+        warn "Warning: Could not load elderdocs.yml: #{e.message}"
       end
+    end
+    
+    def default_output_path
+      base_path =
+        if defined?(Rails) && Rails.root
+          Rails.root
+        else
+          Pathname.new(Dir.pwd)
+        end
       
-      attr_reader :api_servers
+      base_path.join('public', 'elderdocs').to_s
+    end
+    
+    attr_reader :api_servers
     
     def self.instance
       @instance ||= new

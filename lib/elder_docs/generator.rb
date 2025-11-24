@@ -13,7 +13,7 @@ module ElderDocs
     def initialize(definitions_path:, articles_path:, output_path:, api_server: nil, skip_build: false, force_build: false)
       @definitions_path = definitions_path
       @articles_path = articles_path
-      @output_path = output_path
+      @output_path = File.expand_path(output_path, Dir.pwd)
       @api_server = api_server
       @skip_build = skip_build
       @force_build = force_build
@@ -240,13 +240,12 @@ module ElderDocs
       index_html_path = File.join(output_path, 'index.html')
       if File.exist?(index_html_path)
         html_content = File.read(index_html_path, encoding: 'UTF-8')
-        # Replace relative paths with paths relative to mount point
-        html_content.gsub!(/src="\.\//, 'src="/docs/')
-        html_content.gsub!(/href="\.\//, 'href="/docs/')
-        html_content.gsub!(/src="\/assets\//, 'src="/docs/assets/')
-        html_content.gsub!(/href="\/assets\//, 'href="/docs/assets/')
-        # Fix data.js path
-        html_content.gsub!(/src="\/data\.js/, 'src="/docs/data.js')
+        mount_path = normalized_mount_path
+        html_content.gsub!(/src="\.\//, %{src="#{mount_path}/})
+        html_content.gsub!(/href="\.\//, %{href="#{mount_path}/})
+        html_content.gsub!(/src="\/assets\//, %{src="#{mount_path}/assets/})
+        html_content.gsub!(/href="\/assets\//, %{href="#{mount_path}/assets/})
+        html_content.gsub!(/src="\/data\.js/, %{src="#{mount_path}/data.js})
         File.write(index_html_path, html_content)
       end
       
@@ -257,6 +256,14 @@ module ElderDocs
       return unless defined?(Thor)
       
       Thor::Base.shell.new.say(message, color)
+    end
+    
+    def normalized_mount_path
+      mount_path = ElderDocs.config.mount_path || '/docs'
+      mount_path = "/#{mount_path}" unless mount_path.start_with?('/')
+      mount_path = '/' if mount_path == '//'
+      mount_path = mount_path.chomp('/')
+      mount_path.empty? ? '' : mount_path
     end
   end
 end
