@@ -100,16 +100,6 @@ const Sidebar = ({ data, activeView, setActiveView, selectedItem, setSelectedIte
       <div className="p-6 border-b-0 border-black/10 relative" style={{ borderBottomWidth: '3px' }}>
         <div className="pill text-[0.65rem] text-black mb-3 bg-white">ElderDocs</div>
         <h1 className="font-black text-3xl tracking-tight text-black uppercase font-['Syne']">API Space</h1>
-        <div className="mt-4 mb-2">
-          <a
-            href="/docs/ui"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-black/60 hover:text-black underline font-medium"
-          >
-            ⚙️ Configure UI
-          </a>
-        </div>
         <div className="flex gap-2 mt-6">
           <button
             onClick={() => {

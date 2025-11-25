@@ -14,28 +14,21 @@ module ElderDocs
     method_option :force_build, type: :boolean, default: false, desc: 'Force rebuilding frontend assets'
     
     def deploy
-      say '🚀 Starting ElderDocs deployment...', :green
-      
-      definitions_path = options[:definitions]
-      articles_path = options[:articles]
-      
-      unless File.exist?(definitions_path)
-        say "❌ Error: #{definitions_path} not found in current directory", :red
-        exit 1
-      end
-      
-      unless File.exist?(articles_path)
-        say "⚠️  Warning: #{articles_path} not found. Creating empty articles file...", :yellow
-        File.write(articles_path, [].to_json)
-      end
+      say '🚀 Building ElderDocs frontend...', :green
+      say '📝 Note: definitions.json and articles.json are loaded dynamically at runtime', :cyan
+      say '   No need to rebuild when you update your API definitions!', :cyan
+      say ''
       
       output_path = File.expand_path(options[:output] || default_output_path, Dir.pwd)
-      
       ElderDocs.config.output_path = output_path
       
+      # Reload config to get latest settings
+      ElderDocs.config.load_config_file
+      
+      # Build frontend only (no data compilation needed)
       generator = Generator.new(
-        definitions_path: definitions_path,
-        articles_path: articles_path,
+        definitions_path: nil,  # Not needed for dynamic mode
+        articles_path: nil,      # Not needed for dynamic mode
         output_path: output_path,
         api_server: options[:api_server],
         skip_build: options[:skip_build],
@@ -43,9 +36,12 @@ module ElderDocs
       )
       
       begin
-        generator.generate!
-        say '✅ Documentation generated successfully!', :green
+        generator.build_frontend_only!
+        say '✅ Frontend built successfully!', :green
         say "📦 Assets placed in: #{generator.output_path}", :cyan
+        say ''
+        say '✨ Your documentation is now live!', :green
+        say '   Edit definitions.json and articles.json - changes appear instantly!', :cyan
       rescue Generator::ValidationError => e
         say "❌ Validation Error: #{e.message}", :red
         exit 1

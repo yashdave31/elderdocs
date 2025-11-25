@@ -5,7 +5,7 @@ require 'pathname'
 
 module ElderDocs
   class Config
-    attr_accessor :mount_path, :api_server, :auth_types, :ui_config, :admin_password, :output_path
+    attr_accessor :mount_path, :api_server, :auth_types, :ui_config, :admin_password, :output_path, :definitions_file, :articles_file
     
     def initialize
       @mount_path = nil
@@ -15,6 +15,8 @@ module ElderDocs
       @admin_password = nil
       @api_servers = []
       @output_path = default_output_path
+      @definitions_file = nil
+      @articles_file = nil
       load_config_file
     end
     
@@ -40,6 +42,8 @@ module ElderDocs
         @auth_types = config['auth_types'] if config['auth_types']
         @ui_config = config['ui'] if config['ui']  # YAML uses 'ui' key, but we store as ui_config
         @admin_password = config['admin_password'] if config['admin_password']
+        @definitions_file = config['definitions_file'] if config['definitions_file']
+        @articles_file = config['articles_file'] if config['articles_file']
         if config['output_path']
           @output_path = File.expand_path(config['output_path'], config_dir)
         end

@@ -81,49 +81,50 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const initializeData = (payload) => {
-      setData(payload)
-      setLoading(false)
-      
-      if (payload.openapi?.paths) {
-        const firstPath = Object.keys(payload.openapi.paths)[0]
-        const firstMethod = Object.keys(payload.openapi.paths[firstPath])[0]
-        setSelectedItem({ type: 'endpoint', path: firstPath, method: firstMethod })
-      } else if (payload.articles?.length > 0) {
-        setSelectedItem({ type: 'article', id: payload.articles[0].id })
+    const loadData = async () => {
+      try {
+        // Fetch all data in parallel
+        const [definitionsRes, articlesRes, configRes] = await Promise.all([
+          fetch('/docs/api/definitions'),
+          fetch('/docs/api/articles'),
+          fetch('/docs/api/config')
+        ])
+        
+        if (!definitionsRes.ok) {
+          throw new Error(`Failed to load definitions: ${definitionsRes.statusText}`)
+        }
+        
+        const openapi = await definitionsRes.json()
+        const articles = articlesRes.ok ? await articlesRes.json() : []
+        const config = configRes.ok ? await configRes.json() : {}
+        
+        const payload = {
+          openapi,
+          articles,
+          api_server: config.api_server || '',
+          api_servers: config.api_servers || [],
+          auth_types: config.auth_types || ['bearer', 'api_key', 'basic', 'oauth2'],
+          ui_config: config.ui_config || {},
+          generated_at: new Date().toISOString()
+        }
+        
+        setData(payload)
+        setLoading(false)
+        
+        if (payload.openapi?.paths) {
+          const firstPath = Object.keys(payload.openapi.paths)[0]
+          const firstMethod = Object.keys(payload.openapi.paths[firstPath])[0]
+          setSelectedItem({ type: 'endpoint', path: firstPath, method: firstMethod })
+        } else if (payload.articles?.length > 0) {
+          setSelectedItem({ type: 'article', id: payload.articles[0].id })
+        }
+      } catch (error) {
+        console.error('Failed to load ElderDocs data:', error)
+        setLoading(false)
       }
     }
     
-    const tryInitialize = () => {
-      if (window.ElderDocsData) {
-        initializeData(window.ElderDocsData)
-        return true
-      }
-      return false
-    }
-    
-    if (!tryInitialize()) {
-      const handleDataLoaded = () => {
-        if (window.ElderDocsData) {
-          initializeData(window.ElderDocsData)
-        }
-      }
-      
-      window.addEventListener('elderdocs:data_loaded', handleDataLoaded)
-      
-      // Fallback timeout so we don't wait forever
-      const timeoutId = setTimeout(() => {
-        if (!window.ElderDocsData) {
-          console.error('ElderDocsData not found. Make sure data.js is loaded.')
-          setLoading(false)
-        }
-      }, 5000)
-      
-      return () => {
-        window.removeEventListener('elderdocs:data_loaded', handleDataLoaded)
-        clearTimeout(timeoutId)
-      }
-    }
+    loadData()
   }, [])
 
   if (loading) {

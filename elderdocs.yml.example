@@ -8,9 +8,9 @@ mount_path: /docs
 # Output directory for generated assets (relative to your Rails root)
 output_path: ./public/elderdocs
 
-# Admin password for UI configuration page (/docs/ui)
-# Default: 'admin' (or set via ELDERDOCS_ADMIN_PASSWORD environment variable)
-# admin_password: your-secure-password-here
+# Custom file paths (optional, defaults to definitions.json and articles.json in Rails root)
+# definitions_file: definitions.json
+# articles_file: articles.json
 
 # Default API server URL (overrides OpenAPI servers if set)
 # Leave empty to use the first server from your OpenAPI spec

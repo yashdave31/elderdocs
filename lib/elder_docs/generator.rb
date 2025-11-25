@@ -40,6 +40,20 @@ module ElderDocs
       end
     end
     
+    def build_frontend_only!
+      # Build frontend without data compilation (for dynamic mode)
+      # Check if assets already exist
+      assets_exist = File.exist?(File.join(output_path, 'index.html'))
+      
+      if skip_build || (assets_exist && !force_build)
+        say '⏭️  Skipping frontend build (assets already exist)', :yellow
+        say '💡 Run with --force-build to rebuild', :cyan
+      else
+        build_frontend!
+        copy_assets!
+      end
+    end
+    
     private
     
     def validate_definitions!
@@ -207,10 +221,12 @@ module ElderDocs
       
       frontend_dir = File.expand_path(frontend_dir)
       
-      # Write compiled data to frontend public directory
-      public_dir = File.join(frontend_dir, 'public')
-      FileUtils.mkdir_p(public_dir)
-      File.write(File.join(public_dir, 'data.js'), @compiled_data_js)
+      # Write compiled data to frontend public directory (only if in static mode)
+      if @compiled_data_js
+        public_dir = File.join(frontend_dir, 'public')
+        FileUtils.mkdir_p(public_dir)
+        File.write(File.join(public_dir, 'data.js'), @compiled_data_js)
+      end
       
       # Check if node_modules exists, if not, run npm install
       node_modules = File.join(frontend_dir, 'node_modules')

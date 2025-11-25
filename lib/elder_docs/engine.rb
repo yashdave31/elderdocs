@@ -8,15 +8,12 @@ module ElderDocs
     
     # Define routes inline
     routes do
-      # UI Configuration endpoints (before catch-all)
-      get '/ui', to: 'engine/ui_config#show'
-      get '/ui/login', to: 'engine/ui_config#show_login'
-      post '/ui/login', to: 'engine/ui_config#login'
-      post '/ui/logout', to: 'engine/ui_config#logout'
-      post '/ui/config', to: 'engine/ui_config#update'
+      # API endpoints for dynamic data
+      get '/api/definitions', to: 'engine/api#definitions'
+      get '/api/articles', to: 'engine/api#articles'
+      get '/api/config', to: 'engine/api#config'
       
-      # Serve data.js explicitly before catch-all
-      get '/data.js', to: 'engine/docs#show', defaults: { path: 'data.js' }
+      # Serve static assets
       root 'engine/docs#show', defaults: { path: 'index.html' }
       get '/*path', to: 'engine/docs#show', defaults: { path: 'index.html' }
     end
@@ -40,8 +37,8 @@ module ElderDocs
       end
     end
     
-    # Load UI config controller
-    require_relative 'engine/ui_config_controller'
+    # Load API controller
+    require_relative 'engine/api_controller'
     
     # Create a simple controller to serve the static files
     # Use API base to avoid CSRF protection

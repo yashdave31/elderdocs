@@ -5,10 +5,11 @@ Interactive API documentation for Rails. Convert your OpenAPI spec into a beauti
 ## Features
 
 - 🚀 **Interactive API Explorer** - Test endpoints directly from docs
-- 🎨 **Customizable UI** - Web-based configurator at `/docs/ui`
+- 🎨 **Customizable UI** - Configure via `elderdocs.yml`
 - 📖 **Guides & Articles** - Add custom documentation
 - 🔐 **Multiple Auth Types** - Bearer, API Key, Basic, OAuth2
-- ⚡ **Zero Config** - Works out of the box
+- ⚡ **Zero Compilation** - Edit JSON files, changes appear instantly!
+- 📋 **Copy cURL** - One-click copy of API requests
 
 ## Installation
 
@@ -65,13 +66,16 @@ Create `articles.json`:
 ]
 ```
 
-### 3. Generate docs
+### 3. Build frontend (one-time setup)
 
 ```bash
 bundle exec elderdocs deploy
 ```
 
-This builds the SPA into `public/elderdocs` (configurable via `output_path`) so the assets live alongside your application code.
+This builds the frontend SPA into `public/elderdocs` (configurable via `output_path`).
+
+**Note:** This is a one-time build. After this, you can edit `definitions.json` and `articles.json` - changes appear instantly without rebuilding!
+
 ### 4. Mount in routes
 
 ```ruby
@@ -83,11 +87,15 @@ mount ElderDocs::Engine, at: '/docs'
 
 Open `http://localhost:3000/docs` 🎉
 
-## Customize UI
+## Dynamic Updates
 
-Visit `/docs/ui` to customize fonts, colors, and styling with a visual editor.
+**No compilation needed!** After the initial build:
 
-**Default password:** `admin` (or set `admin_password` in `elderdocs.yml`)
+- ✏️ Edit `definitions.json` → Changes appear immediately
+- ✏️ Edit `articles.json` → Changes appear immediately  
+- ✏️ Edit `elderdocs.yml` → Restart Rails server to see UI changes
+
+The frontend fetches data dynamically from your JSON files at runtime.
 
 ## Configuration
 
@@ -111,7 +119,7 @@ auth_types:
   - basic
   - oauth2
 
-# UI customization (or use /docs/ui)
+# UI customization
 ui:
   font_heading: 'Syne'
   font_body: 'IBM Plex Sans'
@@ -122,8 +130,9 @@ ui:
     surface: '#ffffff'
   corner_radius: '0px'
 
-# Admin password for /docs/ui
-admin_password: your-secure-password
+# Custom file paths (optional, defaults to definitions.json and articles.json)
+definitions_file: definitions.json
+articles_file: articles.json
 
 # Where to write generated assets (relative paths are resolved from Rails.root)
 output_path: ./public/elderdocs
