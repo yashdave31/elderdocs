@@ -49,4 +49,25 @@ ui:
   # Corner radius for all UI elements (buttons, cards, inputs)
   # Examples: '0px' (sharp corners), '8px' (rounded), '99px' (pill-shaped)
   corner_radius: '0px'
+  
+  # Custom branding
+  # Path to your favicon file (relative to output_path or absolute URL)
+  # Place your favicon in the output_path directory (e.g., public/elderdocs/favicon.ico)
+  # favicon: 'favicon.ico'
+  # favicon: 'https://example.com/favicon.ico'
+  
+  # Page title shown in the browser tab
+  # page_title: 'Acme API Portal'
+  
+  # Path to your logo file (relative to output_path or absolute URL)
+  # Logo will be displayed in the top left of the sidebar, next to the API Space text
+  # Place your logo in the output_path directory (e.g., public/elderdocs/logo.png)
+  # logo: 'logo.png'
+  # logo: 'https://example.com/logo.png'
+  
+  # Custom text to replace "API Space" in the sidebar header
+  # api_space_text: 'My API Documentation'
+  
+  # Show or hide the "Powered by ElderDocs" footer (defaults to true)
+  # show_powered_by_footer: true
 

@@ -4,6 +4,30 @@ import ContentPanel from './components/ContentPanel'
 import ApiExplorer from './components/ApiExplorer'
 import { ApiKeyProvider } from './contexts/ApiKeyContext'
 
+const slugify = (value) => {
+  if (!value) return ''
+  return value
+    .toString()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9\s-]/g, ' ')
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+const attachArticleSlug = (article) => {
+  if (!article || typeof article !== 'object') return article
+  const slugFromTitle = slugify(article.title)
+  const slugFromId = slugify(article.id)
+  const fallback = article.id ? article.id.toString().toLowerCase() : ''
+  return {
+    ...article,
+    slug: slugFromTitle || slugFromId || fallback
+  }
+}
+
 function App() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -65,8 +89,44 @@ function App() {
           document.head.appendChild(link)
         }
       }
+
+      // Update document title
+      if (ui.page_title) {
+        document.title = ui.page_title
+      } else {
+        document.title = 'ElderDocs - API Documentation'
+      }
+
+      // Handle favicon
+      if (ui.favicon) {
+        const mountPath = window.location.pathname.split('/').slice(0, -1).join('/') || '/docs'
+        let faviconUrl = ui.favicon
+        if (!faviconUrl.startsWith('http://') && !faviconUrl.startsWith('https://')) {
+          const cleanPath = faviconUrl.startsWith('/') ? faviconUrl : `/${faviconUrl}`
+          faviconUrl = `${mountPath}${cleanPath}`
+        }
+        
+        // Remove existing favicon links
+        const existingFavicons = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]')
+        existingFavicons.forEach(link => link.remove())
+        
+        // Add new favicon
+        const faviconLink = document.createElement('link')
+        faviconLink.rel = 'icon'
+        faviconLink.type = getFaviconType(faviconUrl)
+        faviconLink.href = faviconUrl
+        document.head.appendChild(faviconLink)
+      }
     }
   }, [data])
+
+  const getFaviconType = (url) => {
+    if (url.endsWith('.svg')) return 'image/svg+xml'
+    if (url.endsWith('.png')) return 'image/png'
+    if (url.endsWith('.ico')) return 'image/x-icon'
+    if (url.endsWith('.jpg') || url.endsWith('.jpeg')) return 'image/jpeg'
+    return 'image/x-icon'
+  }
 
   useEffect(() => {
     document.body.dataset.mounted = 'false'
@@ -96,11 +156,12 @@ function App() {
         
         const openapi = await definitionsRes.json()
         const articles = articlesRes.ok ? await articlesRes.json() : []
+        const articlesWithSlugs = Array.isArray(articles) ? articles.map(attachArticleSlug) : []
         const config = configRes.ok ? await configRes.json() : {}
         
         const payload = {
           openapi,
-          articles,
+          articles: articlesWithSlugs,
           api_server: config.api_server || '',
           api_servers: config.api_servers || [],
           auth_types: config.auth_types || ['bearer', 'api_key', 'basic', 'oauth2'],
@@ -111,12 +172,25 @@ function App() {
         setData(payload)
         setLoading(false)
         
-        if (payload.openapi?.paths) {
-          const firstPath = Object.keys(payload.openapi.paths)[0]
-          const firstMethod = Object.keys(payload.openapi.paths[firstPath])[0]
-          setSelectedItem({ type: 'endpoint', path: firstPath, method: firstMethod })
-        } else if (payload.articles?.length > 0) {
-          setSelectedItem({ type: 'article', id: payload.articles[0].id })
+        let initialSelectionSet = false
+        if (typeof window !== 'undefined' && window.location.hash) {
+          const hash = window.location.hash.replace('#', '').toLowerCase()
+          const articleFromHash = articlesWithSlugs.find(article => article.slug === hash)
+          if (articleFromHash) {
+            setActiveView('articles')
+            setSelectedItem({ type: 'article', id: articleFromHash.id })
+            initialSelectionSet = true
+          }
+        }
+        
+        if (!initialSelectionSet) {
+          if (payload.openapi?.paths) {
+            const firstPath = Object.keys(payload.openapi.paths)[0]
+            const firstMethod = Object.keys(payload.openapi.paths[firstPath])[0]
+            setSelectedItem({ type: 'endpoint', path: firstPath, method: firstMethod })
+          } else if (payload.articles?.length > 0) {
+            setSelectedItem({ type: 'article', id: payload.articles[0].id })
+          }
         }
       } catch (error) {
         console.error('Failed to load ElderDocs data:', error)
@@ -126,6 +200,44 @@ function App() {
     
     loadData()
   }, [])
+
+  useEffect(() => {
+    if (!data?.articles?.length || typeof window === 'undefined') return
+
+    const selectArticleFromHash = () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase()
+      if (!hash) return
+      const article = data.articles.find(a => a.slug === hash)
+      if (article) {
+        if (selectedItem?.type === 'article' && selectedItem.id === article.id) {
+          return
+        }
+        setActiveView('articles')
+        setSelectedItem({ type: 'article', id: article.id })
+      }
+    }
+
+    selectArticleFromHash()
+    window.addEventListener('hashchange', selectArticleFromHash)
+
+    return () => {
+      window.removeEventListener('hashchange', selectArticleFromHash)
+    }
+  }, [data, selectedItem])
+
+  useEffect(() => {
+    if (!data?.articles?.length || typeof window === 'undefined') return
+
+    if (selectedItem?.type === 'article') {
+      const article = data.articles.find(a => a.id === selectedItem.id)
+      if (article?.slug && window.location.hash.replace('#', '').toLowerCase() !== article.slug) {
+        window.location.hash = article.slug
+      }
+    } else if (window.location.hash) {
+      const newUrl = `${window.location.pathname}${window.location.search}`
+      window.history.replaceState(null, '', newUrl)
+    }
+  }, [selectedItem, data])
 
   if (loading) {
     return (
@@ -142,6 +254,8 @@ function App() {
       </div>
     )
   }
+
+  const showFooter = data?.ui_config?.show_powered_by_footer !== false
 
   return (
     <ApiKeyProvider>
@@ -162,6 +276,11 @@ function App() {
           data={data}
           selectedItem={selectedItem}
         />
+        {showFooter && (
+          <footer className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black/10 p-3 text-center z-10">
+            <p className="text-xs text-black/60 font-medium">Powered by ElderDocs</p>
+          </footer>
+        )}
       </div>
     </ApiKeyProvider>
   )
