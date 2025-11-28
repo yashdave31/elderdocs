@@ -12,6 +12,8 @@ module ElderDocs
       get '/api/definitions', to: 'engine/api#definitions'
       get '/api/articles', to: 'engine/api#articles'
       get '/api/config', to: 'engine/api#config'
+      get '/api/supported-languages', to: 'engine/api#supported_languages'
+      post '/api/generate-code', to: 'engine/api#generate_code'
       
       # Serve static assets
       root 'engine/docs#show', defaults: { path: 'index.html' }

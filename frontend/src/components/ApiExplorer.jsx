@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useApiKey } from '../contexts/ApiKeyContext'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+import CodeGenerator from './features/CodeGenerator'
+import TestCodeGenerator from './features/TestCodeGenerator'
 
 const ApiExplorer = ({ data, selectedItem }) => {
   const { authConfig, setAuthConfig } = useApiKey()
@@ -12,7 +14,8 @@ const ApiExplorer = ({ data, selectedItem }) => {
   const [response, setResponse] = useState(null)
   const [isOpen, setIsOpen] = useState(true)
   const [copied, setCopied] = useState(false)
-  const [showCurlPreview, setShowCurlPreview] = useState(false)
+  const [showCurlPreview, setShowCurlPreview] = useState(true)
+  const [curlFormat, setCurlFormat] = useState('multiline') // 'multiline' | 'single' | 'escaped' | 'powershell'
   
   const authTypes = data?.auth_types || ['bearer', 'api_key', 'basic', 'oauth2']
   const currentAuthType = authConfig?.type || 'bearer'
@@ -83,7 +86,7 @@ const ApiExplorer = ({ data, selectedItem }) => {
     return url
   }
 
-  const generateCurl = () => {
+  const generateCurl = (format = curlFormat) => {
     const url = buildUrl()
     const method = selectedMethod.toUpperCase()
     const curlParts = [`curl -X ${method}`]
@@ -133,7 +136,56 @@ const ApiExplorer = ({ data, selectedItem }) => {
       }
     }
     
-    return curlParts.join(' \\\n  ')
+    // Format based on selected format
+    switch (format) {
+      case 'single':
+        return curlParts.join(' ')
+      case 'escaped':
+        return curlParts.map(p => `"${p.replace(/"/g, '\\"')}"`).join(' ')
+      case 'powershell':
+        return generatePowerShellCommand(url, method, requestHeaders, body)
+      default: // 'multiline'
+        return curlParts.join(' \\\n  ')
+    }
+  }
+
+  const generatePowerShellCommand = (url, method, requestHeaders, body) => {
+    const headersObj = Object.entries(requestHeaders)
+      .map(([key, value]) => `  '${key}' = '${value.replace(/'/g, "''")}'`)
+      .join('\n')
+    
+    let psCommand = `$headers = @{\n${headersObj}\n}\n\n`
+    
+    if (['POST', 'PUT', 'PATCH'].includes(method) && body) {
+      try {
+        const jsonBody = JSON.parse(body)
+        const formattedBody = JSON.stringify(jsonBody).replace(/'/g, "''")
+        psCommand += `$body = '${formattedBody}'\n\n`
+        psCommand += `Invoke-WebRequest -Uri '${url}' -Method ${method} -Headers $headers -Body $body -ContentType 'application/json'`
+      } catch {
+        psCommand += `$body = '${body.replace(/'/g, "''")}'\n\n`
+        psCommand += `Invoke-WebRequest -Uri '${url}' -Method ${method} -Headers $headers -Body $body -ContentType 'application/json'`
+      }
+    } else {
+      psCommand += `Invoke-WebRequest -Uri '${url}' -Method ${method} -Headers $headers`
+    }
+    
+    return psCommand
+  }
+
+  const downloadCurl = (format) => {
+    const curlCommand = generateCurl(format)
+    const extension = format === 'powershell' ? 'ps1' : 'sh'
+    const mimeType = format === 'powershell' ? 'text/plain' : 'text/x-sh'
+    const blob = new Blob([curlCommand], { type: mimeType })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `api-request.${extension}`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
 
   const copyCurl = async () => {
@@ -250,6 +302,11 @@ const ApiExplorer = ({ data, selectedItem }) => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6 text-black">
+        {/* ALWAYS VISIBLE TEST - Should appear even if nothing else does */}
+        <div style={{ position: 'fixed', top: '10px', right: '10px', zIndex: 99999, backgroundColor: '#ff0000', color: 'white', padding: '20px', border: '5px solid black', fontSize: '20px', fontWeight: 'bold' }}>
+          🔴 TEST: ApiExplorer IS RENDERING
+        </div>
+        
         <div className="reveal" style={{ animationDelay: '140ms' }}>
           <p className="text-[0.65rem] uppercase tracking-[0.3em] text-black/60 mb-2 font-bold">Base URL</p>
           {!isCustomUrl ? (
@@ -363,35 +420,143 @@ const ApiExplorer = ({ data, selectedItem }) => {
           </div>
         )}
 
+        <div style={{ opacity: 1, visibility: 'visible', display: 'block', marginTop: '20px', padding: '10px', backgroundColor: '#fff3cd', border: '4px solid #ffc107' }}>
+          <div className="mb-3 p-3 bg-yellow-100 border-2 border-yellow-500" style={{ backgroundColor: '#fef3c7', border: '4px solid #f59e0b', padding: '20px', fontSize: '16px', zIndex: 9999 }}>
+            <p className="text-sm font-bold text-black" style={{ fontSize: '18px', fontWeight: 'bold' }}>🔍 DEBUG: Code Generation Section</p>
+            <p className="text-xs text-black">URL: {buildUrl() || 'NO URL'}</p>
+            <p className="text-xs text-black">Method: {selectedMethod || 'NO METHOD'}</p>
+            <p className="text-xs text-black">CodeGenerator imported: {typeof CodeGenerator !== 'undefined' ? 'YES' : 'NO'}</p>
+          </div>
+          <p className="text-[0.65rem] uppercase tracking-[0.3em] text-black/60 mb-3 font-bold">Code Generation</p>
+          <div className="mb-2 p-2 bg-purple-100 border-2 border-purple-500" style={{ backgroundColor: '#e9d5ff', border: '4px solid #9333ea', padding: '15px' }}>
+            <p className="text-xs font-bold text-black">TEST: buildUrl() = {buildUrl() || 'FALSE'}</p>
+            <p className="text-xs font-bold text-black">TEST: selectedMethod = {selectedMethod || 'FALSE'}</p>
+            <p className="text-xs font-bold text-black">TEST: Condition = {(buildUrl() && selectedMethod) ? 'TRUE' : 'FALSE'}</p>
+            <p className="text-xs font-bold text-black">TEST: CodeGenerator type = {typeof CodeGenerator}</p>
+          </div>
+          {buildUrl() && selectedMethod ? (
+            (() => {
+              try {
+                console.log('Rendering CodeGenerator with:', {
+                  url: buildUrl(),
+                  method: selectedMethod,
+                  CodeGeneratorType: typeof CodeGenerator
+                })
+                return (
+                  <div>
+                    <div className="mb-2 p-2 bg-red-100 border-2 border-red-500" style={{ backgroundColor: '#fee2e2', border: '4px solid #ef4444', padding: '15px', opacity: 1, visibility: 'visible' }}>
+                      <p className="text-xs font-bold text-black" style={{ fontSize: '16px' }}>✅ About to render CodeGenerator</p>
+                    </div>
+                    <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
+                      <TestCodeGenerator
+                        requestData={{
+                          url: buildUrl(),
+                          method: selectedMethod.toUpperCase()
+                        }}
+                      />
+                    </div>
+                    <CodeGenerator
+                      requestData={{
+                        url: buildUrl(),
+                        method: selectedMethod.toUpperCase(),
+                        headers: (() => {
+                          const requestHeaders = {
+                            'Content-Type': 'application/json',
+                            ...headers
+                          }
+                          if (authConfig?.value) {
+                            switch (authConfig.type) {
+                              case 'bearer':
+                                requestHeaders['Authorization'] = `Bearer ${authConfig.value}`
+                                break
+                              case 'api_key':
+                                requestHeaders['X-API-Key'] = authConfig.value
+                                break
+                              case 'basic':
+                                requestHeaders['Authorization'] = `Basic ${btoa(authConfig.value)}`
+                                break
+                              case 'oauth2':
+                                requestHeaders['Authorization'] = `Bearer ${authConfig.value}`
+                                break
+                            }
+                          }
+                          return requestHeaders
+                        })(),
+                        body: body || null
+                      }}
+                    />
+                  </div>
+                )
+              } catch (error) {
+                console.error('Error rendering CodeGenerator:', error)
+                return (
+                  <div className="p-3 bg-red-100 border-2 border-red-500">
+                    <p className="text-xs font-bold text-red-900">Error: {error.message}</p>
+                    <pre className="text-xs text-red-800 mt-2">{error.stack}</pre>
+                  </div>
+                )
+              }
+            })()
+          ) : (
+            <div className="p-3 bg-gray-100 border border-gray-300">
+              <p className="text-xs text-black">Waiting for endpoint selection...</p>
+            </div>
+          )}
+        </div>
+
         <div className="reveal" style={{ animationDelay: '300ms' }}>
-          <button
-            onClick={() => setShowCurlPreview(!showCurlPreview)}
-            className="btn-secondary w-full mb-3 flex items-center justify-between"
-          >
-            <span className="flex items-center gap-2">
-              <span>💻</span>
-              <span>{showCurlPreview ? 'Hide' : 'Show'} cURL Command</span>
-            </span>
-            <span>{showCurlPreview ? '▲' : '▼'}</span>
-          </button>
-          
-          {showCurlPreview && (
-            <div className="mb-3 surface border-2 border-black bg-white p-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-[0.65rem] uppercase tracking-[0.3em] text-black/60 font-bold">cURL Command</p>
+          <div className="mb-3 p-3 bg-blue-100 border-2 border-blue-500">
+            <p className="text-sm font-bold text-black">🔍 DEBUG: cURL Command Section</p>
+            <p className="text-xs text-black">URL: {buildUrl()}</p>
+          </div>
+          <p className="text-[0.65rem] uppercase tracking-[0.3em] text-black/60 mb-2 font-bold">cURL Command</p>
+          <div className="mb-3 surface border-2 border-black bg-white p-4">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-[0.65rem] uppercase tracking-[0.3em] text-black/60 font-bold">cURL Command</p>
+              <div className="flex items-center gap-2">
+                <select
+                  value={curlFormat}
+                  onChange={(e) => setCurlFormat(e.target.value)}
+                  className="text-xs input-field bg-white border-black text-black font-medium px-2 py-1"
+                >
+                  <option value="multiline">Multi-line</option>
+                  <option value="single">Single-line</option>
+                  <option value="escaped">Escaped</option>
+                  <option value="powershell">PowerShell</option>
+                </select>
                 <button
                   onClick={copyCurl}
                   className="text-xs btn-secondary px-2 py-1"
-                  title="Copy cURL command"
+                  title="Copy command"
                 >
                   {copied ? '✓ Copied!' : '📋 Copy'}
                 </button>
               </div>
-              <pre className="text-xs font-mono text-black overflow-x-auto whitespace-pre-wrap break-words">
-                {generateCurl()}
-              </pre>
             </div>
-          )}
+            <pre className="text-xs font-mono text-black overflow-x-auto whitespace-pre-wrap break-words mb-3">
+              {generateCurl()}
+            </pre>
+            <div className="flex gap-2">
+              {curlFormat !== 'powershell' && (
+                <button
+                  onClick={() => downloadCurl('multiline')}
+                  className="text-xs btn-secondary px-3 py-1"
+                  title="Download as shell script"
+                >
+                  📥 Download .sh
+                </button>
+              )}
+              {curlFormat === 'powershell' && (
+                <button
+                  onClick={() => downloadCurl('powershell')}
+                  className="text-xs btn-secondary px-3 py-1"
+                  title="Download as PowerShell script"
+                >
+                  📥 Download .ps1
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="reveal space-y-3" style={{ animationDelay: '320ms' }}>

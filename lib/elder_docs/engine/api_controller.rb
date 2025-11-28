@@ -38,6 +38,44 @@ module ElderDocs
         
         render json: config_data
       end
+
+      def generate_code
+        # Handle params that might be nested under 'api' key (Rails routing)
+        request_data = params[:request_data] || params.dig(:api, :request_data) || {}
+        language = params[:language] || params.dig(:api, :language) || 'javascript'
+        variant = params[:variant] || params.dig(:api, :variant)
+
+        # Ensure request_data is a hash, not ActionController::Parameters
+        request_data = request_data.to_h if request_data.respond_to?(:to_h)
+        request_data = request_data.with_indifferent_access if request_data.is_a?(Hash)
+
+        begin
+          code = ElderDocs::CodeGenerator.generate(
+            request_data,
+            language: language.to_sym,
+            variant: variant
+          )
+
+          render json: { code: code, language: language, variant: variant }
+        rescue ArgumentError => e
+          Rails.logger.error "CodeGenerator ArgumentError: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+          render json: { error: e.message }, status: :bad_request
+        rescue => e
+          Rails.logger.error "CodeGenerator Error: #{e.class}: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+          render json: { error: "Failed to generate code: #{e.message}" }, status: :internal_server_error
+        end
+      end
+
+      def supported_languages
+        languages = ElderDocs::CodeGenerator.supported_languages.transform_values do |info|
+          {
+            name: info[:name],
+            variants: info[:variants]
+          }
+        end
+        
+        render json: languages
+      end
       
       private
       
